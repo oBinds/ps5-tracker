@@ -17,30 +17,12 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: pip install requests
-
-      - name: Find files and run updater
-        run: |
-          GAMES=$(find . -name "games.json" | head -1)
-          SCRIPT=$(find . -name "update_games.py" | head -1)
-          PUBDIR=$(dirname "$GAMES")
-          echo "Games: $GAMES"
-          echo "Script: $SCRIPT"
-          echo "Dir: $PUBDIR"
-          cd $(dirname "$SCRIPT")
-          python update_games.py --games "$OLDPWD/$GAMES"
-
       - name: Copy files for Cloudflare deploy
         run: |
           mkdir -p deploy
           find . -name "games.json" -not -path "./deploy/*" | head -1 | xargs -I{} cp {} deploy/games.json
           find . -name "index.html" -not -path "./deploy/*" | head -1 | xargs -I{} cp {} deploy/index.html
+          echo "Files ready:"
           ls -la deploy/
 
       - name: Deploy to Cloudflare Pages

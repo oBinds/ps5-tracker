@@ -1,0 +1,49 @@
+name: Auto-Update & Deploy PS5 Tracker
+
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install requests
+      - name: Run game data updater
+        run: python scripts/update_games.py
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git diff --quiet public/games.json || echo "changed=true" >> $GITHUB_OUTPUT
+      - name: Commit updated games.json
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git config --global user.name "Binds PS5 Tracker Bot"
+          git config --global user.email "tracker@binds.dev"
+          git add public/games.json
+          git commit -m "🎮 Auto-update: PS5 game data $(date -u '+%Y-%m-%d')"
+          git push
+      - name: Copy files for Cloudflare deploy
+        run: |
+          mkdir -p deploy
+          cp public/games.json deploy/games.json
+          cp public/index.html deploy/index.html
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy deploy --project-name=ps5-tracker --commit-dirty=true

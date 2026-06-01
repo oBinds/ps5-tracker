@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Binds PS5 Tracker</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>" />
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#07071a;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+  :root{--blue:#003087;--blue2:#0057d8;--accent:#3f51b5;--accent2:#5c6bc0;--text:#e8eaf6;--sub:#3f51b5;--dim:#2a3570;--dark:#07071a;--card:#0b0b1e;--border:#1a2260;--green:#4db6ac;--amber:#ffb74d;--red:#ef5350;--cyan:#64b5f6;--purple:#ab47bc}
+  .wrap{max-width:900px;margin:0 auto;padding:1.2rem}
+  .gridbg{position:fixed;inset:0;background-image:linear-gradient(rgba(63,81,181,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(63,81,181,.06) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;z-index:0}
+  .rel{position:relative;z-index:1}
+
+  /* HEADER */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+  .left-head{display:flex;align-items:center;gap:10px}
+  .ps-logo{background:var(--blue);border:1px solid var(--blue2);border-radius:7px;padding:5px 13px;font-size:13px;font-weight:600;color:#fff;letter-spacing:1px}
+  .htitle{font-size:18px;font-weight:600;color:var(--text)}
+  .hsub{font-size:10px;color:var(--sub);margin-top:2px}
+  .right-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .madeby{font-size:10px;color:var(--accent2);border:1px solid var(--border);border-radius:5px;padding:3px 9px}
+  .madeby b{color:#90caf9}
+  .last-update{font-size:9px;color:var(--dim);border:1px solid #12123a;border-radius:5px;padding:3px 9px}
+  .bell-btn{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:5px 10px;color:var(--accent2);cursor:pointer;font-size:12px;position:relative;display:flex;align-items:center;gap:5px;transition:all .12s}
+  .bell-btn:hover{border-color:var(--accent);color:#90caf9}
+  .bell-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:9px;border-radius:999px;padding:1px 4px;min-width:14px;text-align:center;display:none}
+  .scanline{height:1px;background:#0d1240;border-top:1px solid var(--border);margin-bottom:1rem}
+
+  /* NOTIFICATION PANEL */
+  .notif-panel{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:1rem;margin-bottom:1rem;display:none}
+  .notif-panel.show{display:block}
+  .notif-title{font-size:12px;color:#90caf9;font-weight:600;margin-bottom:.7rem;display:flex;align-items:center;justify-content:space-between}
+  .notif-close{cursor:pointer;color:var(--sub);font-size:16px;line-height:1}
+  .notif-empty{font-size:11px;color:var(--dim);padding:.5rem 0}
+  .notif-item{background:#060616;border:1px solid #12123a;border-radius:6px;padding:8px 10px;margin-bottom:5px;display:flex;align-items:flex-start;gap:8px}
+  .notif-dot{width:7px;height:7px;border-radius:50%;background:var(--green);margin-top:3px;flex-shrink:0}
+  .notif-dot.new{background:var(--red);animation:pulse 1.5s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .notif-text{font-size:11px;color:#7986cb;line-height:1.5}
+  .notif-time{font-size:10px;color:var(--dim);margin-top:2px}
+
+  /* SEARCH */
+  .search-row{display:flex;gap:7px;margin-bottom:.8rem}
+  .g-input{flex:1;background:#0d0d22;border:1px solid var(--border);border-radius:7px;padding:9px 13px;font-size:12px;color:#c5cae9;outline:none;font-family:inherit;transition:border-color .12s}
+  .g-input::placeholder{color:var(--dim)}
+  .g-input:focus{border-color:var(--accent)}
+  .g-btn{background:var(--blue);border:1px solid var(--blue2);border-radius:7px;padding:9px 16px;color:#90caf9;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500;transition:background .12s}
+  .g-btn:hover{background:#0041a8}
+
+  /* CHIPS */
+  .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:.7rem}
+  .chip{font-size:11px;padding:4px 11px;border-radius:999px;cursor:pointer;border:1px solid #1a2260;color:var(--sub);background:var(--dark);transition:all .12s;white-space:nowrap;user-select:none}
+  .chip:hover,.chip.on{background:#0d1440;color:#90caf9;border-color:var(--accent)}
+
+  /* ALPHABET */
+  .alpha-bar{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:.8rem}
+  .alpha-btn{font-size:10px;padding:3px 7px;border-radius:4px;cursor:pointer;border:1px solid #12123a;color:var(--dim);background:var(--dark);transition:all .1s;font-weight:600;user-select:none}
+  .alpha-btn:hover,.alpha-btn.on{background:#0d1440;color:#90caf9;border-color:var(--accent)}
+  .alpha-btn.has-games{color:var(--accent2);border-color:#1e2a6e}
+
+  /* RESULTS */
+  .cnt{font-size:10px;color:var(--dim);margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.4px}
+  .rcard{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:1rem;margin-bottom:.8rem;position:relative;transition:border-color .15s}
+  .rcard.tracked{border-color:var(--accent)}
+  .rcard:hover{border-color:#2a3a80}
+  .ct{position:absolute;width:10px;height:10px}
+  .ct.tl{top:0;left:0;border-top:1px solid var(--accent);border-left:1px solid var(--accent);border-radius:2px 0 0 0}
+  .ct.tr{top:0;right:0;border-top:1px solid var(--accent);border-right:1px solid var(--accent);border-radius:0 2px 0 0}
+  .rtitle{font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px}
+  .rmeta{font-size:10px;color:var(--sub);margin-bottom:10px}
+  .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:6px;margin-bottom:8px}
+  .ibox{background:#060616;border:1px solid #12123a;border-radius:6px;padding:8px 10px}
+  .ilab{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+  .ival{font-size:11px;font-weight:600;color:#7986cb}
+  .ival.g{color:var(--green)}.ival.a{color:var(--amber)}.ival.r{color:var(--red)}.ival.b{color:var(--cyan)}
+  .desc{font-size:11px;color:var(--sub);line-height:1.6;margin-bottom:7px}
+  .dline{font-size:10px;color:var(--dim);border-top:1px solid #12123a;padding-top:7px;margin-top:5px;line-height:1.6}
+  .dline b{color:var(--accent2)}
+  .card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px;flex-wrap:wrap;gap:6px}
+  .track-btn{font-size:10px;padding:5px 13px;border-radius:5px;cursor:pointer;border:1px solid var(--border);color:var(--accent2);background:var(--dark);transition:all .12s;font-family:inherit;font-weight:500}
+  .track-btn:hover{border-color:var(--green);color:var(--green)}
+  .track-btn.tracked{background:#042018;border-color:var(--green);color:var(--green)}
+
+  /* BADGES */
+  .badge{font-size:9px;padding:2px 7px;border-radius:4px;font-weight:600}
+  .bh{background:#140404;color:var(--red);border:1px solid #3a0808}
+  .ba{background:#0b0420;color:var(--purple);border:1px solid #280840}
+  .br{background:#011808;color:var(--green);border:1px solid #034020}
+  .bsh{background:#011020;color:var(--cyan);border:1px solid #082850}
+  .bsp{background:#071600;color:#8bc34a;border:1px solid #183000}
+  .bad{background:#140c00;color:var(--amber);border:1px solid #3a2000}
+  .bf{background:#0d0320;color:#ce93d8;border:1px solid #2a0850}
+  .bdel{background:#160c00;color:var(--amber);border:1px solid #3a2000}
+  .bex{background:#00143a;color:#90caf9;border:1px solid var(--blue)}
+  .btba{background:#0d0d22;color:var(--sub);border:1px solid var(--border)}
+  .bbeta{background:#0a1a0a;color:#66bb6a;border:1px solid #1a4a1a}
+  .bnew{background:#0a0a25;color:#9fa8da;border:1px solid #1e2a6e}
+
+  /* EMPTY / LOADING */
+  .empty{text-align:center;padding:3rem 1rem;color:var(--border);font-size:13px}
+  .loading-screen{text-align:center;padding:3rem 1rem;color:var(--sub);font-size:13px}
+  .spin{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite;margin-right:8px;vertical-align:-4px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+
+  /* FOOTER */
+  .src{font-size:9px;color:#1a2260;margin-top:.8rem}
+  .footer{margin-top:1.5rem;padding-top:.8rem;border-top:1px solid #0d1240;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .binds-tag{background:#0d1440;border:1px solid var(--accent);border-radius:5px;padding:4px 13px;color:var(--accent2);font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px}
+  .binds-tag b{color:#90caf9}
+  .footer-right{font-size:9px;color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="gridbg"></div>
+<div class="wrap rel">
+
+  <div class="topbar">
+    <div class="left-head">
+      <div class="ps-logo">PS5</div>
+      <div>
+        <div class="htitle">Game Tracker Bot</div>
+        <div class="hsub">Release dates · delays · pre-orders · betas · live updates</div>
+      </div>
+    </div>
+    <div class="right-head">
+      <div class="last-update" id="lastUpdate">Loading...</div>
+      <button class="bell-btn" onclick="toggleNotifs()">🔔 Alerts <span class="bell-badge" id="bellBadge">0</span></button>
+      <div class="madeby">made by <b>Binds</b></div>
+    </div>
+  </div>
+
+  <div class="scanline"></div>
+
+  <!-- Notification Panel -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-title">
+      <span>🔔 Tracked Game Alerts</span>
+      <span class="notif-close" onclick="toggleNotifs()">✕</span>
+    </div>
+    <div id="notifList"><div class="notif-empty">No alerts yet. Track games below to get notified!</div></div>
+  </div>
+
+  <div class="search-row">
+    <input class="g-input" type="text" id="gameInput" placeholder='Search any game e.g. "Halloween", "Call of Duty", "GTA 6"...' />
+    <button class="g-btn" onclick="doSearch()">Search</button>
+  </div>
+
+  <div class="chips" id="genreChips">
+    <div class="chip on" data-filter="all" onclick="filterGenre('',this)">🎮 All</div>
+    <div class="chip" data-filter="horror" onclick="filterGenre('horror',this)">🩸 Horror</div>
+    <div class="chip" data-filter="action" onclick="filterGenre('action',this)">⚔️ Action</div>
+    <div class="chip" data-filter="rpg" onclick="filterGenre('rpg',this)">🪄 RPG</div>
+    <div class="chip" data-filter="shooter" onclick="filterGenre('shooter',this)">🎯 Shooter</div>
+    <div class="chip" data-filter="sports" onclick="filterGenre('sports',this)">🏆 Sports</div>
+    <div class="chip" data-filter="fighting" onclick="filterGenre('fighting',this)">🥊 Fighting</div>
+    <div class="chip" data-filter="adventure" onclick="filterGenre('adventure',this)">🗺️ Adventure</div>
+    <div class="chip" data-filter="delayed" onclick="filterStatus('delayed',this)">⚠️ Delayed</div>
+    <div class="chip" data-filter="preorder" onclick="filterStatus('preorder',this)">🛒 Pre-Order</div>
+    <div class="chip" data-filter="beta" onclick="filterStatus('beta',this)">🧪 Beta</div>
+    <div class="chip" data-filter="released" onclick="filterStatus('released',this)">✅ Released</div>
+    <div class="chip" data-filter="upcoming" onclick="filterStatus('upcoming',this)">🔜 Upcoming</div>
+  </div>
+
+  <div class="alpha-bar" id="alphaBar"></div>
+
+  <div id="results">
+    <div class="loading-screen"><span class="spin"></span>Loading game database...</div>
+  </div>
+
+  <div class="footer">
+    <div class="binds-tag">🎮 <b>Binds</b> PS5 Tracker</div>
+    <div class="footer-right">Auto-updates daily · Data from PlayStation Blog, Gematsu, Push Square</div>
+  </div>
+
+</div>
+
+<script>
+// ─── Config ───────────────────────────────────────────────────────────────────
+// Raw URL to your games.json on GitHub (update with your actual repo)
+const DATA_URL = "https://raw.githubusercontent.com/oBinds/ps5-tracker/main/public/games.json";
+// ─────────────────────────────────────────────────────────────────────────────
+
+let ALL_GAMES = [];
+let currentFilter = {type:'all', value:''};
+let tracked = {};
+let notifications = [];
+
+// Load persisted data
+try { tracked = JSON.parse(localStorage.getItem('binds_tracked') || '{}'); } catch(e){}
+try { notifications = JSON.parse(localStorage.getItem('binds_notifs') || '[]'); } catch(e){}
+
+// ─── Fetch games from GitHub ──────────────────────────────────────────────────
+async function loadGames() {
+  try {
+    // Cache bust every hour
+    const cacheBust = Math.floor(Date.now() / 3600000);
+    const resp = await fetch(`${DATA_URL}?t=${cacheBust}`);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    ALL_GAMES = data.games || [];
+
+    // Show last updated
+    if (data.lastUpdated) {
+      const d = new Date(data.lastUpdated);
+      document.getElementById('lastUpdate').textContent =
+        `Updated: ${d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}`;
+    }
+
+    // Check for changes vs what we had before
+    checkForTrackedUpdates(data);
+
+    buildAlphaBar();
+    showAll();
+  } catch (e) {
+    document.getElementById('results').innerHTML =
+      `<div class="empty">⚠️ Could not load game data.<br><small style="color:#2a3570">Make sure your repo is public and the URL is correct.<br>${e.message}</small></div>`;
+  }
+}
+
+function checkForTrackedUpdates(data) {
+  const prev = {};
+  try { Object.assign(prev, JSON.parse(localStorage.getItem('binds_prev_data') || '{}')); } catch(e) {}
+
+  for (const game of data.games || []) {
+    if (!tracked[game.id]) continue;
+    const old = prev[game.id];
+    if (!old) continue;
+
+    if (!old.preOrderAvailable && game.preOrderAvailable) {
+      pushNotif(`🛒 PRE-ORDER LIVE: ${game.title} is now available to pre-order!`, true);
+    }
+    if (old.releaseStatus !== 'delayed' && game.releaseStatus === 'delayed') {
+      pushNotif(`⚠️ DELAYED: ${game.title} has been delayed. ${game.delayInfo || ''}`, true);
+    }
+    if (!old.hasBeta && game.hasBeta) {
+      pushNotif(`🧪 BETA: ${game.title} beta has been announced! ${game.betaDate || ''}`, true);
+    }
+    if (old.releaseDate !== game.releaseDate && game.releaseStatus !== 'released') {
+      pushNotif(`📅 DATE CHANGE: ${game.title} — new date: ${game.releaseDate}`, true);
+    }
+    if (old.releaseStatus !== 'released' && game.releaseStatus === 'released') {
+      pushNotif(`✅ OUT NOW: ${game.title} is now available!`, true);
+    }
+  }
+
+  // Save current as previous
+  const newPrev = {};
+  for (const g of data.games || []) newPrev[g.id] = {
+    preOrderAvailable: g.preOrderAvailable,
+    releaseStatus: g.releaseStatus,
+    releaseDate: g.releaseDate,
+    hasBeta: g.hasBeta
+  };
+  localStorage.setItem('binds_prev_data', JSON.stringify(newPrev));
+}
+
+// ─── Alpha bar ────────────────────────────────────────────────────────────────
+function buildAlphaBar() {
+  const lettersWithGames = new Set(ALL_GAMES.map(g => g.title[0].toUpperCase()));
+  const allLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  document.getElementById('alphaBar').innerHTML =
+    allLetters.map(l => {
+      const has = lettersWithGames.has(l);
+      return `<div class="alpha-btn ${has?'has-games':''}" onclick="filterLetter('${l}')" id="alpha_${l}">${l}</div>`;
+    }).join('');
+}
+
+// ─── Filters ──────────────────────────────────────────────────────────────────
+function clearChips() { document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on')); }
+function clearAlpha() { document.querySelectorAll('.alpha-btn').forEach(b=>b.classList.remove('on')); }
+
+function showAll() {
+  currentFilter = {type:'all', value:''};
+  document.getElementById('gameInput').value = '';
+  document.querySelector('[data-filter="all"]')?.classList.add('on');
+  renderGames(ALL_GAMES);
+}
+
+function filterGenre(g, el) {
+  currentFilter = {type:'genre', value:g};
+  clearChips(); clearAlpha();
+  el?.classList.add('on');
+  renderGames(g ? ALL_GAMES.filter(x=>x.genre===g) : ALL_GAMES);
+}
+
+function filterStatus(s, el) {
+  currentFilter = {type:'status', value:s};
+  clearChips(); clearAlpha();
+  el?.classList.add('on');
+  let games;
+  if (s==='delayed')  games = ALL_GAMES.filter(x=>x.releaseStatus==='delayed');
+  else if (s==='preorder') games = ALL_GAMES.filter(x=>x.preOrderAvailable);
+  else if (s==='beta') games = ALL_GAMES.filter(x=>x.hasBeta);
+  else if (s==='released') games = ALL_GAMES.filter(x=>x.releaseStatus==='released');
+  else if (s==='upcoming') games = ALL_GAMES.filter(x=>x.releaseStatus!=='released'&&x.releaseStatus!=='cancelled');
+  renderGames(games || ALL_GAMES);
+}
+
+function filterLetter(l) {
+  currentFilter = {type:'letter', value:l};
+  clearChips(); clearAlpha();
+  document.getElementById('alpha_'+l)?.classList.add('on');
+  renderGames(ALL_GAMES.filter(x=>x.title[0].toUpperCase()===l));
+}
+
+function doSearch() {
+  const q = document.getElementById('gameInput').value.trim().toLowerCase();
+  if (!q) { showAll(); return; }
+  currentFilter = {type:'search', value:q};
+  clearChips(); clearAlpha();
+  renderGames(ALL_GAMES.filter(g =>
+    g.title.toLowerCase().includes(q) ||
+    (g.tags||[]).some(t=>t.toLowerCase().includes(q)) ||
+    g.description.toLowerCase().includes(q) ||
+    g.developer.toLowerCase().includes(q) ||
+    g.genre.toLowerCase().includes(q) ||
+    (g.publisher||'').toLowerCase().includes(q)
+  ));
+}
+
+document.getElementById('gameInput').addEventListener('keydown', e => { if(e.key==='Enter') doSearch(); });
+
+// ─── Tracking & Notifications ─────────────────────────────────────────────────
+function toggleTrack(id, title) {
+  if (tracked[id]) {
+    delete tracked[id];
+    pushNotif(`Stopped tracking: ${title}`, false);
+  } else {
+    tracked[id] = true;
+    pushNotif(`Now tracking: ${title} — you'll be alerted to any updates!`, true);
+  }
+  localStorage.setItem('binds_tracked', JSON.stringify(tracked));
+  re_render();
+  updateBell();
+}
+
+function pushNotif(text, isNew) {
+  notifications.unshift({ text, time: new Date().toLocaleString(), isNew });
+  if (notifications.length > 100) notifications.pop();
+  localStorage.setItem('binds_notifs', JSON.stringify(notifications));
+  updateBell();
+  renderNotifs();
+}
+
+function updateBell() {
+  const n = notifications.filter(x=>x.isNew).length;
+  const b = document.getElementById('bellBadge');
+  b.textContent = n;
+  b.style.display = n > 0 ? 'block' : 'none';
+}
+
+function renderNotifs() {
+  const list = document.getElementById('notifList');
+  if (!notifications.length) {
+    list.innerHTML = '<div class="notif-empty">No alerts yet. Track games to get notified!</div>';
+    return;
+  }
+  list.innerHTML = notifications.map(n => `
+    <div class="notif-item">
+      <div class="notif-dot ${n.isNew?'new':''}"></div>
+      <div>
+        <div class="notif-text">${esc(n.text)}</div>
+        <div class="notif-time">${esc(n.time)}</div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleNotifs() {
+  const panel = document.getElementById('notifPanel');
+  panel.classList.toggle('show');
+  if (panel.classList.contains('show')) {
+    notifications = notifications.map(n=>({...n, isNew:false}));
+    localStorage.setItem('binds_notifs', JSON.stringify(notifications));
+    updateBell();
+    renderNotifs();
+  }
+}
+
+// ─── Render ───────────────────────────────────────────────────────────────────
+function re_render() {
+  const f = currentFilter;
+  if (f.type==='genre') filterGenre(f.value, null);
+  else if (f.type==='status') filterStatus(f.value, null);
+  else if (f.type==='letter') filterLetter(f.value);
+  else if (f.type==='search') doSearch();
+  else renderGames(ALL_GAMES);
+}
+
+const GENRE_BADGE = {horror:'bh',action:'ba',rpg:'br',shooter:'bsh',sports:'bsp',adventure:'bad',fighting:'bf'};
+function gBadge(g) { return GENRE_BADGE[g?.toLowerCase()]||'btba'; }
+function sColor(s) {
+  if (s==='released') return 'b';
+  if (s==='on-track') return 'g';
+  if (s==='delayed'||s==='cancelled') return 'r';
+  return 'a';
+}
+function sLabel(s) {
+  return {['on-track']:'On Track',delayed:'Delayed',released:'Out Now',tba:'TBA',cancelled:'Cancelled'}[s]||s;
+}
+function esc(s) {
+  return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '—';
+}
+
+function renderGames(games) {
+  const res = document.getElementById('results');
+  if (!games.length) {
+    res.innerHTML = '<div class="empty">🎮 No games found. Try a different search or filter.</div>';
+    return;
+  }
+  res.innerHTML =
+    `<div class="cnt">${games.length} game${games.length!==1?'s':''} found</div>` +
+    games.map(g => {
+      const isTracked = !!tracked[g.id];
+      return `
+      <div class="rcard ${isTracked?'tracked':''}">
+        <div class="ct tl"></div><div class="ct tr"></div>
+        <div class="rtitle">
+          🎮 ${esc(g.title)}
+          <span class="badge ${gBadge(g.genre)}">${esc(g.genre)}</span>
+          ${g.ps5Exclusive ? '<span class="badge bex">PS5 Exclusive</span>' : ''}
+          ${g.releaseStatus==='delayed' ? '<span class="badge bdel">⚠ Delayed</span>' : ''}
+          ${g.hasBeta ? '<span class="badge bbeta">Beta</span>' : ''}
+        </div>
+        <div class="rmeta">${esc(g.developer)} · ${esc(g.publisher||'')} · ${esc(g.platforms)}</div>
+        <div class="info-grid">
+          <div class="ibox">
+            <div class="ilab">📅 Release Date</div>
+            <div class="ival ${sColor(g.releaseStatus)}">${esc(g.releaseDate||'TBA')}</div>
+          </div>
+          <div class="ibox">
+            <div class="ilab">📡 Status</div>
+            <div class="ival ${sColor(g.releaseStatus)}">${sLabel(g.releaseStatus)}</div>
+          </div>
+          <div class="ibox">
+            <div class="ilab">🛒 Pre-Order</div>
+            <div class="ival ${g.preOrderAvailable?'g':'a'}">${g.preOrderAvailable?'✅ Live Now':(g.preOrderDate?esc(g.preOrderDate):'Not Yet')}</div>
+          </div>
+          ${g.preOrderPrice ? `<div class="ibox"><div class="ilab">🏷️ Price</div><div class="ival">${esc(g.preOrderPrice)}</div></div>` : ''}
+          ${g.metacriticScore ? `<div class="ibox"><div class="ilab">⭐ Metacritic</div><div class="ival b">${esc(g.metacriticScore)}/100</div></div>` : ''}
+          <div class="ibox">
+            <div class="ilab">📀 Editions</div>
+            <div class="ival">${[g.physicalEdition&&'Disc',g.digitalEdition&&'Digital'].filter(Boolean).join(' + ')||'?'}</div>
+          </div>
+        </div>
+        <div class="desc">${esc(g.description)}</div>
+        ${g.delayInfo ? `<div class="dline"><b>⚠️ Delay:</b> ${esc(g.delayInfo)}</div>` : ''}
+        ${g.betaDate ? `<div class="dline"><b>🧪 Beta:</b> ${esc(g.betaDate)}</div>` : ''}
+        ${g.preOrderBonus ? `<div class="dline"><b>🎁 Pre-order Bonus:</b> ${esc(g.preOrderBonus)}</div>` : ''}
+        ${g.preOrderLinks ? `<div class="dline"><b>🔗 Where to Pre-order:</b> ${esc(g.preOrderLinks)}</div>` : ''}
+        <div class="card-footer">
+          <button class="track-btn ${isTracked?'tracked':''}"
+            onclick="toggleTrack('${g.id.replace(/'/g,"\\'")}','${g.title.replace(/'/g,"\\'")}')">
+            ${isTracked ? '✅ Tracking' : '🔔 Track this game'}
+          </button>
+          <span style="font-size:9px;color:#1e2a6e">${isTracked ? 'Alerts ON — will notify on updates' : 'Get alerts for delays, pre-orders & betas'}</span>
+        </div>
+      </div>`;
+    }).join('') +
+    `<div class="src">ℹ️ Data auto-updated daily · Sources: PlayStation Blog, Gematsu, Push Square · Always verify on PlayStation Store</div>`;
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+updateBell();
+renderNotifs();
+loadGames();
+</script>
+</body>
+</html>

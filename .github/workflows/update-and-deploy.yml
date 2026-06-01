@@ -25,34 +25,22 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Find and run game data updater
-        run: |
-          SCRIPT=$(find . -name "update_games.py" | head -1)
-          echo "Found script at: $SCRIPT"
-          python "$SCRIPT"
-
-      - name: Find games.json and check for changes
-        id: check_changes
+      - name: Find files and run updater
         run: |
           GAMES=$(find . -name "games.json" | head -1)
-          echo "Found games.json at: $GAMES"
-          echo "GAMES_PATH=$GAMES" >> $GITHUB_ENV
-          git diff --quiet "$GAMES" || echo "changed=true" >> $GITHUB_OUTPUT
-
-      - name: Commit updated games.json
-        if: steps.check_changes.outputs.changed == 'true'
-        run: |
-          git config --global user.name "Binds PS5 Tracker Bot"
-          git config --global user.email "tracker@binds.dev"
-          git add "$GAMES_PATH"
-          git commit -m "🎮 Auto-update: PS5 game data $(date -u '+%Y-%m-%d')"
-          git push
+          SCRIPT=$(find . -name "update_games.py" | head -1)
+          PUBDIR=$(dirname "$GAMES")
+          echo "Games: $GAMES"
+          echo "Script: $SCRIPT"
+          echo "Dir: $PUBDIR"
+          cd $(dirname "$SCRIPT")
+          python update_games.py --games "$OLDPWD/$GAMES"
 
       - name: Copy files for Cloudflare deploy
         run: |
           mkdir -p deploy
-          find . -name "games.json" | head -1 | xargs -I{} cp {} deploy/games.json
-          find . -name "index.html" | head -1 | xargs -I{} cp {} deploy/index.html
+          find . -name "games.json" -not -path "./deploy/*" | head -1 | xargs -I{} cp {} deploy/games.json
+          find . -name "index.html" -not -path "./deploy/*" | head -1 | xargs -I{} cp {} deploy/index.html
           ls -la deploy/
 
       - name: Deploy to Cloudflare Pages

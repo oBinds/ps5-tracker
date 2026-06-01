@@ -16,31 +16,45 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Install dependencies
         run: pip install requests
-      - name: Run game data updater
-        run: python scripts/update_games.py
-      - name: Check for changes
+
+      - name: Find and run game data updater
+        run: |
+          SCRIPT=$(find . -name "update_games.py" | head -1)
+          echo "Found script at: $SCRIPT"
+          python "$SCRIPT"
+
+      - name: Find games.json and check for changes
         id: check_changes
         run: |
-          git diff --quiet public/games.json || echo "changed=true" >> $GITHUB_OUTPUT
+          GAMES=$(find . -name "games.json" | head -1)
+          echo "Found games.json at: $GAMES"
+          echo "GAMES_PATH=$GAMES" >> $GITHUB_ENV
+          git diff --quiet "$GAMES" || echo "changed=true" >> $GITHUB_OUTPUT
+
       - name: Commit updated games.json
         if: steps.check_changes.outputs.changed == 'true'
         run: |
           git config --global user.name "Binds PS5 Tracker Bot"
           git config --global user.email "tracker@binds.dev"
-          git add public/games.json
+          git add "$GAMES_PATH"
           git commit -m "🎮 Auto-update: PS5 game data $(date -u '+%Y-%m-%d')"
           git push
+
       - name: Copy files for Cloudflare deploy
         run: |
           mkdir -p deploy
-          cp public/games.json deploy/games.json
-          cp public/index.html deploy/index.html
+          find . -name "games.json" | head -1 | xargs -I{} cp {} deploy/games.json
+          find . -name "index.html" | head -1 | xargs -I{} cp {} deploy/index.html
+          ls -la deploy/
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:

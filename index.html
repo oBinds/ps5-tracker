@@ -363,7 +363,7 @@ html,body{background:#07071a;min-height:100%;font-family:-apple-system,BlinkMacS
 const SUPABASE_URL = 'https://uflkusbgmxkcaosbqxav.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmbGt1c2JnbXhrY2Fvc2JxeGF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzNjAzNzYsImV4cCI6MjA5NTkzNjM3Nn0.sxQecTkOz_9q0NbTkZRsqX46H2jkJxyPFaYSxUxUBJQ';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const DATA_URL = '/games.json';
+const DATA_URL = '/ps5-tracker/games.json';
 
 let ALL_GAMES=[], currentFilter={type:'all',value:''}, trackedIds=new Set();
 let notifications=[], currentUser=null, currentUsername='', forgotType='password', toastTimeout=null;

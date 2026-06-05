@@ -1,470 +1,931 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Binds PS5 Tracker</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>"/>
+<link rel="manifest" href="/manifest.json"/>
+<link rel="apple-touch-icon" href="/icon-192.png"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="PS5 Tracker"/>
+<meta name="theme-color" content="#07071a"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{background:#07071a;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-  :root{--blue:#003087;--blue2:#0057d8;--accent:#3f51b5;--accent2:#5c6bc0;--text:#e8eaf6;--sub:#3f51b5;--dim:#2a3570;--dark:#07071a;--card:#0b0b1e;--border:#1a2260;--green:#4db6ac;--amber:#ffb74d;--red:#ef5350;--cyan:#64b5f6;--purple:#ab47bc}
-  .wrap{max-width:900px;margin:0 auto;padding:1.2rem}
-  .gridbg{position:fixed;inset:0;background-image:linear-gradient(rgba(63,81,181,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(63,81,181,.06) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;z-index:0}
-  .rel{position:relative;z-index:1}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#07071a;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#e8eaf6}
+:root{--blue:#003087;--blue2:#0057d8;--accent:#3f51b5;--accent2:#5c6bc0;--text:#e8eaf6;--sub:#3f51b5;--dim:#2a3570;--dark:#07071a;--card:#0b0b1e;--border:#1a2260;--green:#4db6ac;--amber:#ffb74d;--red:#ef5350;--cyan:#64b5f6;--purple:#ab47bc}
+.gridbg{position:fixed;inset:0;background-image:linear-gradient(rgba(63,81,181,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(63,81,181,.06) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;z-index:0}
 
-  /* HEADER */
-  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
-  .left-head{display:flex;align-items:center;gap:10px}
-  .ps-logo{background:var(--blue);border:1px solid var(--blue2);border-radius:7px;padding:5px 13px;font-size:13px;font-weight:600;color:#fff;letter-spacing:1px}
-  .htitle{font-size:18px;font-weight:600;color:var(--text)}
-  .hsub{font-size:10px;color:var(--sub);margin-top:2px}
-  .right-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .madeby{font-size:10px;color:var(--accent2);border:1px solid var(--border);border-radius:5px;padding:3px 9px}
-  .madeby b{color:#90caf9}
-  .last-update{font-size:9px;color:var(--dim);border:1px solid #12123a;border-radius:5px;padding:3px 9px}
-  .bell-btn{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:5px 10px;color:var(--accent2);cursor:pointer;font-size:12px;position:relative;display:flex;align-items:center;gap:5px;transition:all .12s}
-  .bell-btn:hover{border-color:var(--accent);color:#90caf9}
-  .bell-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:9px;border-radius:999px;padding:1px 4px;min-width:14px;text-align:center;display:none}
-  .scanline{height:1px;background:#0d1240;border-top:1px solid var(--border);margin-bottom:1rem}
+/* AUTH */
+#authScreen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:#07071a;overflow-y:auto}
+.auth-box{background:#0b0b1e;border:1px solid var(--border);border-radius:14px;padding:1.5rem;width:calc(100% - 32px);max-width:400px;position:relative;z-index:1;margin:16px auto}
+.auth-logo{text-align:center;margin-bottom:1.5rem}
+.auth-logo .ps{background:var(--blue);border:1px solid var(--blue2);border-radius:7px;padding:5px 14px;font-size:14px;font-weight:700;color:#fff;letter-spacing:1px;display:inline-block;margin-bottom:8px}
+.auth-logo h2{font-size:18px;font-weight:600;color:var(--text)}
+.auth-logo p{font-size:11px;color:var(--sub);margin-top:3px}
+.auth-tabs{display:flex;margin-bottom:1.5rem;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.auth-tab{flex:1;padding:8px;text-align:center;font-size:12px;font-weight:500;cursor:pointer;color:var(--sub);background:var(--dark);transition:all .12s;font-family:inherit;border:none}
+.auth-tab.on{background:#0d1440;color:#90caf9}
+.auth-field{margin-bottom:.8rem}
+.auth-field label{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+.auth-field input{width:100%;background:#060616;border:1px solid var(--border);border-radius:7px;padding:9px 12px;font-size:13px;color:var(--text);outline:none;font-family:inherit;transition:border-color .12s}
+.auth-field input:focus{border-color:var(--accent)}
+.auth-field input::placeholder{color:var(--dim)}
+.auth-optional{font-size:10px;color:var(--dim);margin-left:4px;font-style:italic}
+.auth-submit{width:100%;background:var(--blue);border:1px solid var(--blue2);border-radius:8px;padding:10px;color:#90caf9;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:.5rem;transition:background .12s}
+.auth-submit:hover{background:#0041a8}
+.auth-err{font-size:11px;color:var(--red);margin-top:.6rem;text-align:center;min-height:16px}
+.auth-ok{font-size:11px;color:var(--green);margin-top:.6rem;text-align:center;min-height:16px}
+.auth-link{font-size:11px;color:var(--accent2);text-align:center;margin-top:.8rem;cursor:pointer}
+.auth-link:hover{color:#90caf9}
+.forgot-pick{display:flex;gap:8px;margin-bottom:1rem}
+.forgot-opt{flex:1;padding:9px;border:1px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;font-size:11px;color:var(--sub);background:var(--dark);transition:all .12s;font-family:inherit}
+.forgot-opt:hover,.forgot-opt.on{background:#0d1440;color:#90caf9;border-color:var(--accent)}
+.back-link{font-size:11px;color:var(--accent2);cursor:pointer;margin-top:.8rem;text-align:center}
+.back-link:hover{color:#90caf9}
 
-  /* NOTIFICATION PANEL */
-  .notif-panel{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:1rem;margin-bottom:1rem;display:none}
-  .notif-panel.show{display:block}
-  .notif-title{font-size:12px;color:#90caf9;font-weight:600;margin-bottom:.7rem;display:flex;align-items:center;justify-content:space-between}
-  .notif-close{cursor:pointer;color:var(--sub);font-size:16px;line-height:1}
-  .notif-empty{font-size:11px;color:var(--dim);padding:.5rem 0}
-  .notif-item{background:#060616;border:1px solid #12123a;border-radius:6px;padding:8px 10px;margin-bottom:5px;display:flex;align-items:flex-start;gap:8px}
-  .notif-dot{width:7px;height:7px;border-radius:50%;background:var(--green);margin-top:3px;flex-shrink:0}
-  .notif-dot.new{background:var(--red);animation:pulse 1.5s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-  .notif-text{font-size:11px;color:#7986cb;line-height:1.5}
-  .notif-time{font-size:10px;color:var(--dim);margin-top:2px}
-
-  /* SEARCH */
-  .search-row{display:flex;gap:7px;margin-bottom:.8rem}
-  .g-input{flex:1;background:#0d0d22;border:1px solid var(--border);border-radius:7px;padding:9px 13px;font-size:12px;color:#c5cae9;outline:none;font-family:inherit;transition:border-color .12s}
-  .g-input::placeholder{color:var(--dim)}
-  .g-input:focus{border-color:var(--accent)}
-  .g-btn{background:var(--blue);border:1px solid var(--blue2);border-radius:7px;padding:9px 16px;color:#90caf9;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500;transition:background .12s}
-  .g-btn:hover{background:#0041a8}
-
-  /* CHIPS */
-  .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:.7rem}
-  .chip{font-size:11px;padding:4px 11px;border-radius:999px;cursor:pointer;border:1px solid #1a2260;color:var(--sub);background:var(--dark);transition:all .12s;white-space:nowrap;user-select:none}
-  .chip:hover,.chip.on{background:#0d1440;color:#90caf9;border-color:var(--accent)}
-
-  /* ALPHABET */
-  .alpha-bar{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:.8rem}
-  .alpha-btn{font-size:10px;padding:3px 7px;border-radius:4px;cursor:pointer;border:1px solid #12123a;color:var(--dim);background:var(--dark);transition:all .1s;font-weight:600;user-select:none}
-  .alpha-btn:hover,.alpha-btn.on{background:#0d1440;color:#90caf9;border-color:var(--accent)}
-  .alpha-btn.has-games{color:var(--accent2);border-color:#1e2a6e}
-
-  /* RESULTS */
-  .cnt{font-size:10px;color:var(--dim);margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.4px}
-  .rcard{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:1rem;margin-bottom:.8rem;position:relative;transition:border-color .15s}
-  .rcard.tracked{border-color:var(--accent)}
-  .rcard:hover{border-color:#2a3a80}
-  .ct{position:absolute;width:10px;height:10px}
-  .ct.tl{top:0;left:0;border-top:1px solid var(--accent);border-left:1px solid var(--accent);border-radius:2px 0 0 0}
-  .ct.tr{top:0;right:0;border-top:1px solid var(--accent);border-right:1px solid var(--accent);border-radius:0 2px 0 0}
-  .rtitle{font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px}
-  .rmeta{font-size:10px;color:var(--sub);margin-bottom:10px}
-  .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:6px;margin-bottom:8px}
-  .ibox{background:#060616;border:1px solid #12123a;border-radius:6px;padding:8px 10px}
-  .ilab{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
-  .ival{font-size:11px;font-weight:600;color:#7986cb}
-  .ival.g{color:var(--green)}.ival.a{color:var(--amber)}.ival.r{color:var(--red)}.ival.b{color:var(--cyan)}
-  .desc{font-size:11px;color:var(--sub);line-height:1.6;margin-bottom:7px}
-  .dline{font-size:10px;color:var(--dim);border-top:1px solid #12123a;padding-top:7px;margin-top:5px;line-height:1.6}
-  .dline b{color:var(--accent2)}
-  .card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px;flex-wrap:wrap;gap:6px}
-  .track-btn{font-size:10px;padding:5px 13px;border-radius:5px;cursor:pointer;border:1px solid var(--border);color:var(--accent2);background:var(--dark);transition:all .12s;font-family:inherit;font-weight:500}
-  .track-btn:hover{border-color:var(--green);color:var(--green)}
-  .track-btn.tracked{background:#042018;border-color:var(--green);color:var(--green)}
-
-  /* BADGES */
-  .badge{font-size:9px;padding:2px 7px;border-radius:4px;font-weight:600}
-  .bh{background:#140404;color:var(--red);border:1px solid #3a0808}
-  .ba{background:#0b0420;color:var(--purple);border:1px solid #280840}
-  .br{background:#011808;color:var(--green);border:1px solid #034020}
-  .bsh{background:#011020;color:var(--cyan);border:1px solid #082850}
-  .bsp{background:#071600;color:#8bc34a;border:1px solid #183000}
-  .bad{background:#140c00;color:var(--amber);border:1px solid #3a2000}
-  .bf{background:#0d0320;color:#ce93d8;border:1px solid #2a0850}
-  .bdel{background:#160c00;color:var(--amber);border:1px solid #3a2000}
-  .bex{background:#00143a;color:#90caf9;border:1px solid var(--blue)}
-  .btba{background:#0d0d22;color:var(--sub);border:1px solid var(--border)}
-  .bbeta{background:#0a1a0a;color:#66bb6a;border:1px solid #1a4a1a}
-  .bnew{background:#0a0a25;color:#9fa8da;border:1px solid #1e2a6e}
-
-  /* EMPTY / LOADING */
-  .empty{text-align:center;padding:3rem 1rem;color:var(--border);font-size:13px}
-  .loading-screen{text-align:center;padding:3rem 1rem;color:var(--sub);font-size:13px}
-  .spin{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite;margin-right:8px;vertical-align:-4px}
-  @keyframes sp{to{transform:rotate(360deg)}}
-
-  /* FOOTER */
-  .src{font-size:9px;color:#1a2260;margin-top:.8rem}
-  .footer{margin-top:1.5rem;padding-top:.8rem;border-top:1px solid #0d1240;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
-  .binds-tag{background:#0d1440;border:1px solid var(--accent);border-radius:5px;padding:4px 13px;color:var(--accent2);font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px}
-  .binds-tag b{color:#90caf9}
-  .footer-right{font-size:9px;color:var(--dim)}
+/* APP */
+#appScreen{display:none}
+.wrap{max-width:920px;margin:0 auto;padding:1.2rem;position:relative;z-index:1}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+.left-head{display:flex;align-items:center;gap:10px}
+.ps-logo{background:var(--blue);border:1px solid var(--blue2);border-radius:7px;padding:5px 13px;font-size:13px;font-weight:600;color:#fff;letter-spacing:1px}
+.htitle{font-size:18px;font-weight:600;color:var(--text)}
+.hsub{font-size:10px;color:var(--sub);margin-top:2px}
+.right-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.user-badge{font-size:11px;color:#fff;background:#003087;border:1px solid #0057d8;border-radius:5px;padding:5px 11px;font-weight:600;display:flex;align-items:center;gap:4px}
+.logout-btn{font-size:11px;color:#ef5350;border:1px solid #ef5350;border-radius:5px;padding:5px 11px;cursor:pointer;background:#140404;font-family:inherit;font-weight:500}
+.logout-btn:hover{background:#200808;color:#ff6b6b;border-color:#ff6b6b}
+.last-update{font-size:10px;color:#5c6bc0;border:1px solid #1e2a6e;border-radius:5px;padding:5px 11px;background:#080818}
+.bell-btn{background:#0d1440;border:1px solid #3f51b5;border-radius:7px;padding:5px 11px;color:#90caf9;cursor:pointer;font-size:11px;position:relative;display:flex;align-items:center;gap:5px;font-family:inherit;font-weight:500}
+.bell-btn:hover{border-color:var(--accent);color:#90caf9}
+.bell-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:9px;border-radius:999px;padding:1px 4px;min-width:14px;text-align:center;display:none}
+.notif-enable-btn{background:#042018;border:1px solid var(--green);border-radius:7px;padding:5px 11px;color:var(--green);cursor:pointer;font-size:11px;font-family:inherit;font-weight:500}
+.notif-enable-btn.enabled{background:#021408;color:#4db6ac;border-color:#4db6ac;cursor:default;font-weight:500}
+.madeby{font-size:11px;color:#90caf9;border:1px solid #3f51b5;border-radius:5px;padding:5px 11px;background:#0d1440}
+.madeby b{color:#90caf9}
+.scanline{height:1px;background:#0d1240;border-top:1px solid var(--border);margin-bottom:1rem}
+.notif-panel{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:1rem;margin-bottom:1rem;display:none}
+.notif-panel.show{display:block}
+.notif-title{font-size:12px;color:#90caf9;font-weight:600;margin-bottom:.7rem;display:flex;align-items:center;justify-content:space-between}
+.notif-close{cursor:pointer;color:var(--sub);font-size:16px;background:none;border:none;font-family:inherit}
+.notif-empty{font-size:11px;color:var(--dim);padding:.5rem 0}
+.notif-item{background:#060616;border:1px solid #12123a;border-radius:6px;padding:8px 10px;margin-bottom:5px;display:flex;align-items:flex-start;gap:8px}
+.notif-dot{width:7px;height:7px;border-radius:50%;background:var(--green);margin-top:3px;flex-shrink:0}
+.notif-dot.new{background:var(--red);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.notif-text{font-size:11px;color:#7986cb;line-height:1.5}
+.notif-time{font-size:10px;color:var(--dim);margin-top:2px}
+.search-row{display:flex;gap:7px;margin-bottom:.8rem}
+.g-input{flex:1;background:#0d0d22;border:1px solid var(--border);border-radius:7px;padding:9px 13px;font-size:12px;color:#c5cae9;outline:none;font-family:inherit;transition:border-color .12s}
+.g-input::placeholder{color:var(--dim)}
+.g-input:focus{border-color:var(--accent)}
+.g-btn{background:var(--blue);border:1px solid var(--blue2);border-radius:7px;padding:9px 16px;color:#90caf9;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500}
+.g-btn:hover{background:#0041a8}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:.7rem}
+.chip{font-size:11px;padding:4px 11px;border-radius:999px;cursor:pointer;border:1px solid #1a2260;color:var(--sub);background:var(--dark);transition:all .12s;white-space:nowrap;user-select:none;font-family:inherit}
+.chip:hover,.chip.on{background:#0d1440;color:#90caf9;border-color:var(--accent)}
+.alpha-bar{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:.8rem}
+.alpha-btn{font-size:10px;padding:3px 7px;border-radius:4px;cursor:pointer;border:1px solid #12123a;color:var(--dim);background:var(--dark);transition:all .1s;font-weight:600;user-select:none;font-family:inherit}
+.alpha-btn:hover,.alpha-btn.on{background:#0d1440;color:#90caf9;border-color:var(--accent)}
+.alpha-btn.has-games{color:var(--accent2);border-color:#1e2a6e}
+.cnt{font-size:10px;color:var(--dim);margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.4px}
+.rcard{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:1rem;margin-bottom:.8rem;position:relative;transition:border-color .15s}
+.rcard.tracked{border-color:var(--accent)}
+.rcard:hover{border-color:#2a3a80}
+.ct{position:absolute;width:10px;height:10px}
+.ct.tl{top:0;left:0;border-top:1px solid var(--accent);border-left:1px solid var(--accent);border-radius:2px 0 0 0}
+.ct.tr{top:0;right:0;border-top:1px solid var(--accent);border-right:1px solid var(--accent);border-radius:0 2px 0 0}
+.rtitle{font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px}
+.rmeta{font-size:10px;color:var(--sub);margin-bottom:10px}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:6px;margin-bottom:8px}
+.ibox{background:#060616;border:1px solid #12123a;border-radius:6px;padding:8px 10px}
+.ilab{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.ival{font-size:11px;font-weight:600;color:#7986cb}
+.ival.g{color:var(--green)}.ival.a{color:var(--amber)}.ival.r{color:var(--red)}.ival.b{color:var(--cyan)}
+.desc{font-size:11px;color:var(--sub);line-height:1.6;margin-bottom:7px}
+.dline{font-size:10px;color:var(--dim);border-top:1px solid #12123a;padding-top:7px;margin-top:5px;line-height:1.6}
+.dline b{color:var(--accent2)}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px;flex-wrap:wrap;gap:6px}
+.track-btn{font-size:11px;padding:6px 16px;border-radius:6px;cursor:pointer;border:1px solid #3f51b5;color:#90caf9;background:#0d1440;transition:all .12s;font-family:inherit;font-weight:500}
+.track-btn:hover{border-color:var(--green);color:var(--green)}
+.track-btn.tracked{background:#042018;border-color:#4db6ac;color:#4db6ac;font-weight:600}
+.badge{font-size:9px;padding:2px 7px;border-radius:4px;font-weight:600}
+.bh{background:#140404;color:var(--red);border:1px solid #3a0808}
+.ba{background:#0b0420;color:var(--purple);border:1px solid #280840}
+.br{background:#011808;color:var(--green);border:1px solid #034020}
+.bsh{background:#011020;color:var(--cyan);border:1px solid #082850}
+.bsp{background:#071600;color:#8bc34a;border:1px solid #183000}
+.bad{background:#140c00;color:var(--amber);border:1px solid #3a2000}
+.bf{background:#0d0320;color:#ce93d8;border:1px solid #2a0850}
+.bdel{background:#160c00;color:var(--amber);border:1px solid #3a2000}
+.bex{background:#00143a;color:#90caf9;border:1px solid var(--blue)}
+.btba{background:#0d0d22;color:var(--sub);border:1px solid var(--border)}
+.bbeta{background:#0a1a0a;color:#66bb6a;border:1px solid #1a4a1a}
+.empty{text-align:center;padding:3rem 1rem;color:var(--border);font-size:13px}
+.loading-screen{text-align:center;padding:3rem 1rem;color:var(--sub);font-size:13px}
+.spin{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite;margin-right:8px;vertical-align:-4px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.src{font-size:9px;color:#1a2260;margin-top:.8rem}
+.footer{margin-top:1.5rem;padding-top:.8rem;border-top:1px solid #0d1240;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.binds-tag{background:#0d1440;border:1px solid var(--accent);border-radius:5px;padding:4px 13px;color:var(--accent2);font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px}
+.binds-tag b{color:#90caf9}
+.footer-right{font-size:9px;color:var(--dim)}
+.toast{position:fixed;bottom:24px;right:24px;background:#0d1440;border:1px solid var(--accent);border-radius:10px;padding:14px 18px;color:var(--text);font-size:13px;z-index:9999;display:none;max-width:320px;box-shadow:0 4px 24px rgba(0,0,0,.5);animation:slideIn .3s ease}
+.toast.show{display:flex;align-items:flex-start;gap:10px}
+.toast-icon{font-size:22px;flex-shrink:0}
+.toast-title{font-size:12px;font-weight:600;color:#90caf9;margin-bottom:3px}
+.toast-body{font-size:11px;color:var(--accent2)}
+@keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
 </style>
 </head>
 <body>
 <div class="gridbg"></div>
-<div class="wrap rel">
 
-  <div class="topbar">
-    <div class="left-head">
-      <div class="ps-logo">PS5</div>
-      <div>
-        <div class="htitle">Game Tracker Bot</div>
-        <div class="hsub">Release dates · delays · pre-orders · betas · live updates</div>
+<!-- AUTH SCREEN -->
+<div id="authScreen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="ps">PS5</div>
+      <h2>🎮 Binds PS5 Tracker</h2>
+      <p>Sign in to sync your tracked games across all devices</p>
+    </div>
+
+    <!-- SIGN IN -->
+    <div id="loginView">
+      <div class="auth-tabs">
+        <button class="auth-tab on" onclick="showView('loginView',this)">Sign In</button>
+        <button class="auth-tab" onclick="showView('registerView',this)">Create Account</button>
+      </div>
+      <div class="auth-field">
+        <label>Username</label>
+        <input type="text" id="loginUser" placeholder="BindsGaming"/>
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <button class="auth-submit" onclick="doLogin()">Sign In</button>
+      <div class="auth-err" id="loginErr"></div>
+      <div class="auth-link" onclick="showView('forgotView')">Forgot username or password?</div>
+    </div>
+
+    <!-- CREATE ACCOUNT -->
+    <div id="registerView" style="display:none">
+      <div class="auth-tabs">
+        <button class="auth-tab" onclick="showView('loginView',this)">Sign In</button>
+        <button class="auth-tab on" onclick="showView('registerView',this)">Create Account</button>
+      </div>
+      <div class="auth-field">
+        <label>Username</label>
+        <input type="text" id="regUser" placeholder="BindsGaming" maxlength="20"/>
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <input type="password" id="regPass" placeholder="6–16 characters"/>
+      </div>
+      <div class="auth-field">
+        <label>Confirm Password</label>
+        <input type="password" id="regPass2" placeholder="Repeat password"/>
+      </div>
+      <div class="auth-field">
+        <label>Email <span class="auth-optional">(optional — needed for password recovery only)</span></label>
+        <input type="email" id="regEmail" placeholder="your@email.com"/>
+      </div>
+      <button class="auth-submit" onclick="doRegister()">Create Account</button>
+      <div class="auth-err" id="registerErr"></div>
+      <div class="auth-ok" id="registerOk"></div>
+    </div>
+
+    <!-- FORGOT -->
+    <div id="forgotView" style="display:none">
+      <div style="font-size:14px;color:#90caf9;font-weight:600;margin-bottom:.5rem">🔑 Account Recovery</div>
+      <div style="font-size:11px;color:var(--sub);margin-bottom:1rem">What do you need help with?</div>
+      <div class="forgot-pick">
+        <button class="forgot-opt on" onclick="setForgotType('password',this)">Forgot Password</button>
+        <button class="forgot-opt" onclick="setForgotType('username',this)">Forgot Username</button>
+      </div>
+      <div class="auth-field">
+        <label>Your Email Address</label>
+        <input type="email" id="forgotEmail" placeholder="your@email.com"/>
+      </div>
+      <button class="auth-submit" onclick="doForgot()">Send Recovery Email</button>
+      <div class="auth-err" id="forgotErr"></div>
+      <div class="auth-ok" id="forgotOk"></div>
+      <div class="back-link" onclick="showView('loginView')">← Back to Sign In</div>
+    </div>
+
+    <!-- RESET PASSWORD -->
+    <div id="resetView" style="display:none">
+      <div style="font-size:14px;color:#90caf9;font-weight:600;margin-bottom:.5rem">🔒 Set New Password</div>
+      <div style="font-size:11px;color:var(--sub);margin-bottom:1rem">Choose a new password for your account.</div>
+      <div class="auth-field">
+        <label>New Password</label>
+        <input type="password" id="resetPass" placeholder="6–16 characters"/>
+      </div>
+      <div class="auth-field">
+        <label>Confirm New Password</label>
+        <input type="password" id="resetPass2" placeholder="Repeat password"/>
+      </div>
+      <button class="auth-submit" onclick="doResetPassword()">Save New Password</button>
+      <div class="auth-err" id="resetErr"></div>
+      <div class="auth-ok" id="resetOk"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- APP SCREEN -->
+<div id="appScreen">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="left-head">
+        <div class="ps-logo">PS5</div>
+        <div>
+          <div class="htitle">Game Tracker Bot</div>
+          <div class="hsub">Release dates · delays · pre-orders · betas · live updates</div>
+        </div>
+      </div>
+      <div class="right-head">
+        <div class="last-update" id="lastUpdate">Loading...</div>
+        <div class="user-badge">👤 <span id="usernameBadge">User</span></div>
+        <button class="notif-enable-btn" id="notifEnableBtn" onclick="requestNotifPermission()">🔔 Enable Notifications</button>
+        <button class="bell-btn" onclick="toggleNotifs()">🔔 Alerts <span class="bell-badge" id="bellBadge">0</span></button>
+        <button class="track-btn" onclick="openAccountSettings()" style="border-color:#5c6bc0;color:#90caf9;background:#0d1440;">⚙️ Account</button>
+        <div class="madeby">made by <b>Binds</b></div>
       </div>
     </div>
-    <div class="right-head">
-      <div class="last-update" id="lastUpdate">Loading...</div>
-      <button class="bell-btn" onclick="toggleNotifs()">🔔 Alerts <span class="bell-badge" id="bellBadge">0</span></button>
-      <div class="madeby">made by <b>Binds</b></div>
+    <div class="scanline"></div>
+
+    <div class="notif-panel" id="notifPanel">
+      <div class="notif-title">
+        <span>🔔 Tracked Game Alerts</span>
+        <button class="notif-close" onclick="toggleNotifs()">✕</button>
+      </div>
+      <div id="notifList"><div class="notif-empty">No alerts yet. Track games below!</div></div>
+    </div>
+
+    <div class="search-row">
+      <input class="g-input" type="text" id="gameInput" placeholder='Search — "Halloween", "Call of Duty", "GTA 6", "horror"...'/>
+      <button class="g-btn" onclick="doSearch()">Search</button>
+    </div>
+
+    <div class="chips">
+      <div class="chip on" onclick="showAll(this)">🎮 All</div>
+      <div class="chip" onclick="filterGenre('horror',this)">🩸 Horror</div>
+      <div class="chip" onclick="filterGenre('action',this)">⚔️ Action</div>
+      <div class="chip" onclick="filterGenre('rpg',this)">🪄 RPG</div>
+      <div class="chip" onclick="filterGenre('shooter',this)">🎯 Shooter</div>
+      <div class="chip" onclick="filterGenre('sports',this)">🏆 Sports</div>
+      <div class="chip" onclick="filterGenre('fighting',this)">🥊 Fighting</div>
+      <div class="chip" onclick="filterGenre('adventure',this)">🗺️ Adventure</div>
+      <div class="chip" onclick="filterStatus('delayed',this)">⚠️ Delayed</div>
+      <div class="chip" onclick="filterStatus('preorder',this)">🛒 Pre-Order</div>
+      <div class="chip" onclick="filterStatus('beta',this)">🧪 Beta</div>
+      <div class="chip" onclick="filterStatus('released',this)">✅ Released</div>
+      <div class="chip" onclick="filterStatus('upcoming',this)">🔜 Upcoming</div>
+    </div>
+
+    <div class="alpha-bar" id="alphaBar"></div>
+    <div id="results"><div class="loading-screen"><span class="spin"></span>Loading games...</div></div>
+
+    <div class="footer">
+      <div class="binds-tag">🎮 <b>Binds</b> PS5 Tracker</div>
+      <div class="footer-right">Auto-updates daily · PlayStation Blog · Gematsu · Push Square</div>
     </div>
   </div>
+</div>
 
-  <div class="scanline"></div>
-
-  <!-- Notification Panel -->
-  <div class="notif-panel" id="notifPanel">
-    <div class="notif-title">
-      <span>🔔 Tracked Game Alerts</span>
-      <span class="notif-close" onclick="toggleNotifs()">✕</span>
+<!-- Account Settings Modal -->
+<style>
+.acc-section{background:#060616;border:1px solid #12123a;border-radius:8px;margin-bottom:8px;overflow:hidden;}
+.acc-section-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;cursor:pointer;user-select:none;transition:background .12s;}
+.acc-section-hdr:hover{background:#0a0a20;}
+.acc-section-title{font-size:11px;font-weight:600;color:var(--accent2);display:flex;align-items:center;gap:7px;}
+.acc-section-arrow{font-size:10px;color:var(--dim);transition:transform .2s;}
+.acc-section.open .acc-section-arrow{transform:rotate(180deg);}
+.acc-section-body{display:none;padding:0 14px 13px;}
+.acc-section.open .acc-section-body{display:block;}
+.acc-logout-btn{width:100%;background:#140404;border:1px solid #ef5350;border-radius:8px;padding:10px;color:#ef5350;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:4px;transition:all .15s;}
+.acc-logout-btn:hover{background:#200808;color:#ff6b6b;border-color:#ff6b6b;}
+</style>
+<div id="accountModal" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;display:none;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#0b0b1e;border:1px solid var(--accent);border-radius:14px;padding:1.5rem;width:min(400px,100%);position:relative;max-height:90vh;overflow-y:auto;">
+    <div style="font-size:14px;font-weight:600;color:#90caf9;margin-bottom:1.2rem;display:flex;align-items:center;justify-content:space-between;">
+      <span>⚙️ Account Settings</span>
+      <button onclick="closeAccountSettings()" style="background:none;border:none;color:var(--sub);font-size:18px;cursor:pointer;font-family:inherit;">✕</button>
     </div>
-    <div id="notifList"><div class="notif-empty">No alerts yet. Track games below to get notified!</div></div>
+
+    <!-- Change Password -->
+    <div class="acc-section" id="accPassSection">
+      <div class="acc-section-hdr" onclick="toggleAccSection('accPassSection')">
+        <span class="acc-section-title">🔒 Change Password</span>
+        <span class="acc-section-arrow">▼</span>
+      </div>
+      <div class="acc-section-body">
+        <div class="auth-field"><label>New Password</label><input type="password" id="newPass" placeholder="6–16 characters" maxlength="16"/></div>
+        <div class="auth-field"><label>Confirm New Password</label><input type="password" id="newPass2" placeholder="Repeat new password" maxlength="16"/></div>
+        <button class="auth-submit" onclick="changePassword()" style="margin-top:4px;">Update Password</button>
+        <div style="font-size:11px;color:var(--red);margin-top:5px;min-height:16px;" id="passErr"></div>
+        <div style="font-size:11px;color:var(--green);margin-top:5px;min-height:16px;" id="passOk"></div>
+      </div>
+    </div>
+
+    <!-- Change Email -->
+    <div class="acc-section" id="accEmailSection">
+      <div class="acc-section-hdr" onclick="toggleAccSection('accEmailSection')">
+        <span class="acc-section-title">📧 Change Email <span style="font-size:9px;color:var(--dim);font-weight:400;">(for password recovery)</span></span>
+        <span class="acc-section-arrow">▼</span>
+      </div>
+      <div class="acc-section-body">
+        <div class="auth-field"><label>New Email</label><input type="email" id="newEmail" placeholder="your@email.com"/></div>
+        <div class="auth-field"><label>Confirm New Email</label><input type="email" id="newEmail2" placeholder="Repeat email address"/></div>
+        <button class="auth-submit" onclick="changeEmail()" style="margin-top:4px;">Update Email</button>
+        <div style="font-size:11px;color:var(--red);margin-top:5px;min-height:16px;" id="emailErr"></div>
+        <div style="font-size:11px;color:var(--green);margin-top:5px;min-height:16px;" id="emailOk"></div>
+      </div>
+    </div>
+
+    <!-- Sign Out -->
+    <button class="acc-logout-btn" onclick="closeAccountSettings();doLogout()">🚪 Sign Out</button>
   </div>
+</div>
 
-  <div class="search-row">
-    <input class="g-input" type="text" id="gameInput" placeholder='Search any game e.g. "Halloween", "Call of Duty", "GTA 6"...' />
-    <button class="g-btn" onclick="doSearch()">Search</button>
-  </div>
-
-  <div class="chips" id="genreChips">
-    <div class="chip on" data-filter="all" onclick="filterGenre('',this)">🎮 All</div>
-    <div class="chip" data-filter="horror" onclick="filterGenre('horror',this)">🩸 Horror</div>
-    <div class="chip" data-filter="action" onclick="filterGenre('action',this)">⚔️ Action</div>
-    <div class="chip" data-filter="rpg" onclick="filterGenre('rpg',this)">🪄 RPG</div>
-    <div class="chip" data-filter="shooter" onclick="filterGenre('shooter',this)">🎯 Shooter</div>
-    <div class="chip" data-filter="sports" onclick="filterGenre('sports',this)">🏆 Sports</div>
-    <div class="chip" data-filter="fighting" onclick="filterGenre('fighting',this)">🥊 Fighting</div>
-    <div class="chip" data-filter="adventure" onclick="filterGenre('adventure',this)">🗺️ Adventure</div>
-    <div class="chip" data-filter="delayed" onclick="filterStatus('delayed',this)">⚠️ Delayed</div>
-    <div class="chip" data-filter="preorder" onclick="filterStatus('preorder',this)">🛒 Pre-Order</div>
-    <div class="chip" data-filter="beta" onclick="filterStatus('beta',this)">🧪 Beta</div>
-    <div class="chip" data-filter="released" onclick="filterStatus('released',this)">✅ Released</div>
-    <div class="chip" data-filter="upcoming" onclick="filterStatus('upcoming',this)">🔜 Upcoming</div>
-  </div>
-
-  <div class="alpha-bar" id="alphaBar"></div>
-
-  <div id="results">
-    <div class="loading-screen"><span class="spin"></span>Loading game database...</div>
-  </div>
-
-  <div class="footer">
-    <div class="binds-tag">🎮 <b>Binds</b> PS5 Tracker</div>
-    <div class="footer-right">Auto-updates daily · Data from PlayStation Blog, Gematsu, Push Square</div>
-  </div>
-
+<!-- Toast -->
+<div class="toast" id="toast">
+  <div class="toast-icon" id="toastIcon">🎮</div>
+  <div><div class="toast-title" id="toastTitle"></div><div class="toast-body" id="toastBody"></div></div>
 </div>
 
 <script>
-// ─── Config ───────────────────────────────────────────────────────────────────
-// Raw URL to your games.json on GitHub (update with your actual repo)
-const DATA_URL = "https://raw.githubusercontent.com/oBinds/ps5-tracker/main/public/games.json";
-// ─────────────────────────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://uflkusbgmxkcaosbqxav.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmbGt1c2JnbXhrY2Fvc2JxeGF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzNjAzNzYsImV4cCI6MjA5NTkzNjM3Nn0.sxQecTkOz_9q0NbTkZRsqX46H2jkJxyPFaYSxUxUBJQ';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const DATA_URL = '/games.json';
 
-let ALL_GAMES = [];
-let currentFilter = {type:'all', value:''};
-let tracked = {};
-let notifications = [];
+let ALL_GAMES=[], currentFilter={type:'all',value:''}, trackedIds=new Set();
+let notifications=[], currentUser=null, currentUsername='', forgotType='password', toastTimeout=null;
 
-// Load persisted data
-try { tracked = JSON.parse(localStorage.getItem('binds_tracked') || '{}'); } catch(e){}
-try { notifications = JSON.parse(localStorage.getItem('binds_notifs') || '[]'); } catch(e){}
-
-// ─── Fetch games from GitHub ──────────────────────────────────────────────────
-async function loadGames() {
-  try {
-    // Cache bust every hour
-    const cacheBust = Math.floor(Date.now() / 3600000);
-    const resp = await fetch(`${DATA_URL}?t=${cacheBust}`);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
-    ALL_GAMES = data.games || [];
-
-    // Show last updated
-    if (data.lastUpdated) {
-      const d = new Date(data.lastUpdated);
-      document.getElementById('lastUpdate').textContent =
-        `Updated: ${d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}`;
-    }
-
-    // Check for changes vs what we had before
-    checkForTrackedUpdates(data);
-
-    buildAlphaBar();
-    showAll();
-  } catch (e) {
-    document.getElementById('results').innerHTML =
-      `<div class="empty">⚠️ Could not load game data.<br><small style="color:#2a3570">Make sure your repo is public and the URL is correct.<br>${e.message}</small></div>`;
-  }
+// ── View switching ────────────────────────────────────────────────────────────
+function showView(id, tabEl){
+  ['loginView','registerView','forgotView','resetView'].forEach(v=>{
+    document.getElementById(v).style.display = v===id ? '' : 'none';
+  });
+  clearErrors();
+}
+function clearErrors(){
+  ['loginErr','registerErr','forgotErr','registerOk','forgotOk'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.textContent='';
+  });
+}
+function setForgotType(type,el){
+  forgotType=type;
+  document.querySelectorAll('.forgot-opt').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
 }
 
-function checkForTrackedUpdates(data) {
-  const prev = {};
-  try { Object.assign(prev, JSON.parse(localStorage.getItem('binds_prev_data') || '{}')); } catch(e) {}
+// ── Register ──────────────────────────────────────────────────────────────────
+async function doRegister(){
+  const username = document.getElementById('regUser').value.trim();
+  const pass     = document.getElementById('regPass').value;
+  const pass2    = document.getElementById('regPass2').value;
+  const email    = document.getElementById('regEmail').value.trim();
+  const errEl    = document.getElementById('registerErr');
+  const okEl     = document.getElementById('registerOk');
+  errEl.textContent=''; okEl.textContent='';
 
-  for (const game of data.games || []) {
-    if (!tracked[game.id]) continue;
-    const old = prev[game.id];
-    if (!old) continue;
+  if(!username||username.length<3){errEl.textContent='Username must be at least 3 characters.';return;}
+  if(!/^[a-zA-Z0-9_]+$/.test(username)){errEl.textContent='Username: letters, numbers and _ only.';return;}
+  // Protect the Binds name — nobody can use anything containing "binds"
+  if(username.toLowerCase().includes('binds')){errEl.textContent='That username is not available.';return;}
+  if(pass.length<6){errEl.textContent='Password must be at least 6 characters.';return;}
+  if(pass.length>16){errEl.textContent='Password cannot be more than 16 characters.';return;}
+  if(pass!==pass2){errEl.textContent='Passwords do not match.';return;}
 
-    if (!old.preOrderAvailable && game.preOrderAvailable) {
-      pushNotif(`🛒 PRE-ORDER LIVE: ${game.title} is now available to pre-order!`, true);
-    }
-    if (old.releaseStatus !== 'delayed' && game.releaseStatus === 'delayed') {
-      pushNotif(`⚠️ DELAYED: ${game.title} has been delayed. ${game.delayInfo || ''}`, true);
-    }
-    if (!old.hasBeta && game.hasBeta) {
-      pushNotif(`🧪 BETA: ${game.title} beta has been announced! ${game.betaDate || ''}`, true);
-    }
-    if (old.releaseDate !== game.releaseDate && game.releaseStatus !== 'released') {
-      pushNotif(`📅 DATE CHANGE: ${game.title} — new date: ${game.releaseDate}`, true);
-    }
-    if (old.releaseStatus !== 'released' && game.releaseStatus === 'released') {
-      pushNotif(`✅ OUT NOW: ${game.title} is now available!`, true);
-    }
+  // Check username taken
+  const {data:existing}=await sb.from('profiles').select('id').eq('username',username).maybeSingle();
+  if(existing){errEl.textContent='That username is already taken.';return;}
+
+  // Need a unique fake email if none provided
+  const useEmail = email || username.toLowerCase()+'@ps5tracker.binds.local';
+
+  const {data,error}=await sb.auth.signUp({email:useEmail,password:pass,options:{data:{username}}});
+  if(error){errEl.textContent=error.message;return;}
+
+  if(data.user){
+    await sb.from('profiles').insert({id:data.user.id,username,email:email||null});
   }
 
-  // Save current as previous
-  const newPrev = {};
-  for (const g of data.games || []) newPrev[g.id] = {
-    preOrderAvailable: g.preOrderAvailable,
-    releaseStatus: g.releaseStatus,
-    releaseDate: g.releaseDate,
-    hasBeta: g.hasBeta
-  };
-  localStorage.setItem('binds_prev_data', JSON.stringify(newPrev));
-}
-
-// ─── Alpha bar ────────────────────────────────────────────────────────────────
-function buildAlphaBar() {
-  const lettersWithGames = new Set(ALL_GAMES.map(g => g.title[0].toUpperCase()));
-  const allLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-  document.getElementById('alphaBar').innerHTML =
-    allLetters.map(l => {
-      const has = lettersWithGames.has(l);
-      return `<div class="alpha-btn ${has?'has-games':''}" onclick="filterLetter('${l}')" id="alpha_${l}">${l}</div>`;
-    }).join('');
-}
-
-// ─── Filters ──────────────────────────────────────────────────────────────────
-function clearChips() { document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on')); }
-function clearAlpha() { document.querySelectorAll('.alpha-btn').forEach(b=>b.classList.remove('on')); }
-
-function showAll() {
-  currentFilter = {type:'all', value:''};
-  document.getElementById('gameInput').value = '';
-  document.querySelector('[data-filter="all"]')?.classList.add('on');
-  renderGames(ALL_GAMES);
-}
-
-function filterGenre(g, el) {
-  currentFilter = {type:'genre', value:g};
-  clearChips(); clearAlpha();
-  el?.classList.add('on');
-  renderGames(g ? ALL_GAMES.filter(x=>x.genre===g) : ALL_GAMES);
-}
-
-function filterStatus(s, el) {
-  currentFilter = {type:'status', value:s};
-  clearChips(); clearAlpha();
-  el?.classList.add('on');
-  let games;
-  if (s==='delayed')  games = ALL_GAMES.filter(x=>x.releaseStatus==='delayed');
-  else if (s==='preorder') games = ALL_GAMES.filter(x=>x.preOrderAvailable);
-  else if (s==='beta') games = ALL_GAMES.filter(x=>x.hasBeta);
-  else if (s==='released') games = ALL_GAMES.filter(x=>x.releaseStatus==='released');
-  else if (s==='upcoming') games = ALL_GAMES.filter(x=>x.releaseStatus!=='released'&&x.releaseStatus!=='cancelled');
-  renderGames(games || ALL_GAMES);
-}
-
-function filterLetter(l) {
-  currentFilter = {type:'letter', value:l};
-  clearChips(); clearAlpha();
-  document.getElementById('alpha_'+l)?.classList.add('on');
-  renderGames(ALL_GAMES.filter(x=>x.title[0].toUpperCase()===l));
-}
-
-function doSearch() {
-  const q = document.getElementById('gameInput').value.trim().toLowerCase();
-  if (!q) { showAll(); return; }
-  currentFilter = {type:'search', value:q};
-  clearChips(); clearAlpha();
-  renderGames(ALL_GAMES.filter(g =>
-    g.title.toLowerCase().includes(q) ||
-    (g.tags||[]).some(t=>t.toLowerCase().includes(q)) ||
-    g.description.toLowerCase().includes(q) ||
-    g.developer.toLowerCase().includes(q) ||
-    g.genre.toLowerCase().includes(q) ||
-    (g.publisher||'').toLowerCase().includes(q)
-  ));
-}
-
-document.getElementById('gameInput').addEventListener('keydown', e => { if(e.key==='Enter') doSearch(); });
-
-// ─── Tracking & Notifications ─────────────────────────────────────────────────
-function toggleTrack(id, title) {
-  if (tracked[id]) {
-    delete tracked[id];
-    pushNotif(`Stopped tracking: ${title}`, false);
+  if(email){
+    okEl.textContent='Account created! Check your email to confirm, then sign in.';
   } else {
-    tracked[id] = true;
-    pushNotif(`Now tracking: ${title} — you'll be alerted to any updates!`, true);
+    okEl.textContent='Account created! You can now sign in with your username and password.';
+    // Auto sign in if no email confirmation needed
+    setTimeout(()=>showView('loginView'), 2000);
   }
-  localStorage.setItem('binds_tracked', JSON.stringify(tracked));
-  re_render();
-  updateBell();
 }
 
-function pushNotif(text, isNew) {
-  notifications.unshift({ text, time: new Date().toLocaleString(), isNew });
-  if (notifications.length > 100) notifications.pop();
-  localStorage.setItem('binds_notifs', JSON.stringify(notifications));
+// ── Login by username ─────────────────────────────────────────────────────────
+async function doLogin(){
+  const username = document.getElementById('loginUser').value.trim();
+  const pass     = document.getElementById('loginPass').value;
+  const errEl    = document.getElementById('loginErr');
+  errEl.textContent='';
+  if(!username||!pass){errEl.textContent='Please enter your username and password.';return;}
+
+  // Look up profile
+  const {data:profile}=await sb.from('profiles').select('email,id,locked,banned').eq('username',username).maybeSingle();
+  if(!profile){errEl.textContent='Username not found.';return;}
+
+  // Check banned
+  if(profile.banned){
+    errEl.textContent='⛔ This account has been permanently banned.';
+    return;
+  }
+
+  // Check locked
+  if(profile.locked){
+    errEl.textContent='🔒 This account has been locked. Please contact support.';
+    return;
+  }
+
+  // Build the email used at signup
+  const useEmail = profile.email || username.toLowerCase()+'@ps5tracker.binds.local';
+
+  const {data,error}=await sb.auth.signInWithPassword({email:useEmail,password:pass});
+  if(error){errEl.textContent='Incorrect password.';return;}
+  await onLogin(data.user, username);
+}
+
+// ── Forgot ────────────────────────────────────────────────────────────────────
+async function doForgot(){
+  const email=document.getElementById('forgotEmail').value.trim();
+  const errEl=document.getElementById('forgotErr');
+  const okEl=document.getElementById('forgotOk');
+  errEl.textContent=''; okEl.textContent='';
+  if(!email){errEl.textContent='Please enter your email address.';return;}
+
+  // Look up profile by email
+  const {data:profile}=await sb.from('profiles').select('username').eq('email',email).maybeSingle();
+
+  if(!profile){
+    errEl.textContent='No account found with that email address.';
+    return;
+  }
+
+  if(forgotType==='username'){
+    // Send username via Cloudflare Worker email
+    try{
+      const r=await fetch('https://ps5-tracker-email.bindsog.workers.dev/',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({email,type:'username',username:profile.username})
+      });
+      const d=await r.json();
+      if(d.success) okEl.textContent='Your username has been sent to '+email+'! Check your inbox.';
+      else errEl.textContent='Could not send email: '+d.error;
+    }catch(e){errEl.textContent='Failed to send email. Please try again.';}
+  } else {
+    // Send password reset via Cloudflare Worker email
+    try{
+      const r=await fetch('https://ps5-tracker-email.bindsog.workers.dev/',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({email,type:'password'})
+      });
+      const d=await r.json();
+      if(d.success) okEl.textContent='Password reset email sent to '+email+'! Check your inbox.';
+      else errEl.textContent='Could not send email: '+d.error;
+    }catch(e){errEl.textContent='Failed to send email. Please try again.';}
+  }
+}
+
+// ── Logout ────────────────────────────────────────────────────────────────────
+async function doLogout(){
+  await sb.auth.signOut();
+  currentUser=null; currentUsername=''; trackedIds=new Set(); notifications=[];
+  document.getElementById('appScreen').style.display='none';
+  document.getElementById('authScreen').style.display='flex';
+  showView('loginView');
+}
+
+// ── On login ──────────────────────────────────────────────────────────────────
+async function onLogin(user, username){
+  currentUser=user;
+
+  // Always re-check lock/ban status from DB on every login/session restore
+  const {data:profile}=await sb.from('profiles').select('username,locked,banned').eq('id',user.id).maybeSingle();
+  
+  if(profile?.banned){
+    await sb.auth.signOut();
+    document.getElementById('authScreen').style.display='flex';
+    document.getElementById('appScreen').style.display='none';
+    document.getElementById('loginErr').textContent='⛔ This account has been permanently banned.';
+    showView('loginView');
+    return;
+  }
+  if(profile?.locked){
+    await sb.auth.signOut();
+    document.getElementById('authScreen').style.display='flex';
+    document.getElementById('appScreen').style.display='none';
+    document.getElementById('loginErr').textContent='🔒 This account has been locked. Please contact support.';
+    showView('loginView');
+    return;
+  }
+
+  if(!username){
+    username=profile?.username||user.email?.split('@')[0]||'User';
+  }
+  currentUsername=username;
+  document.getElementById('usernameBadge').textContent=currentUsername;
+
+  // Load user notifications from localStorage
+  try{notifications=JSON.parse(localStorage.getItem('binds_notifs_'+user.id)||'[]');}catch(e){}
+
+  await loadTrackedFromDB();
+  startLockListener();
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('appScreen').style.display='block';
+  checkNotifPermission();
   updateBell();
   renderNotifs();
+  loadGames();
 }
 
-function updateBell() {
-  const n = notifications.filter(x=>x.isNew).length;
-  const b = document.getElementById('bellBadge');
-  b.textContent = n;
-  b.style.display = n > 0 ? 'block' : 'none';
+// ── Tracked games ─────────────────────────────────────────────────────────────
+async function loadTrackedFromDB(){
+  if(!currentUser) return;
+  const {data}=await sb.from('tracked_games').select('game_id').eq('user_id',currentUser.id);
+  trackedIds=new Set((data||[]).map(r=>r.game_id));
 }
 
-function renderNotifs() {
-  const list = document.getElementById('notifList');
-  if (!notifications.length) {
-    list.innerHTML = '<div class="notif-empty">No alerts yet. Track games to get notified!</div>';
-    return;
+async function toggleTrack(id,title){
+  if(!currentUser) return;
+  if(trackedIds.has(id)){
+    await sb.from('tracked_games').delete().eq('user_id',currentUser.id).eq('game_id',id);
+    trackedIds.delete(id);
+    pushNotif('Stopped tracking: '+title,false);
+    showToast('🔕','Untracked',title+' removed.');
+  } else {
+    await sb.from('tracked_games').insert({user_id:currentUser.id,game_id:id,game_title:title});
+    trackedIds.add(id);
+    pushNotif('Now tracking: '+title+' — alerts ON!',true);
+    playNotifSound();
+    showToast('🔔','Now Tracking!',title+' — synced across all your devices!');
   }
-  list.innerHTML = notifications.map(n => `
-    <div class="notif-item">
-      <div class="notif-dot ${n.isNew?'new':''}"></div>
-      <div>
-        <div class="notif-text">${esc(n.text)}</div>
-        <div class="notif-time">${esc(n.time)}</div>
-      </div>
-    </div>`).join('');
+  rerender(); updateBell();
 }
 
-function toggleNotifs() {
-  const panel = document.getElementById('notifPanel');
-  panel.classList.toggle('show');
-  if (panel.classList.contains('show')) {
-    notifications = notifications.map(n=>({...n, isNew:false}));
-    localStorage.setItem('binds_notifs', JSON.stringify(notifications));
-    updateBell();
-    renderNotifs();
+// ── Load games ────────────────────────────────────────────────────────────────
+async function loadGames(){
+  try{
+    const r=await fetch(DATA_URL+'?t='+Date.now());
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    ALL_GAMES=data.games||[];
+    if(data.lastUpdated){
+      const d=new Date(data.lastUpdated);
+      document.getElementById('lastUpdate').textContent='Updated: '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    }
+    checkTrackedUpdates(data);
+    buildAlpha();
+    renderGames(ALL_GAMES);
+  }catch(e){
+    document.getElementById('results').innerHTML='<div class="empty">⚠️ Could not load game data. Make sure games.json is uploaded to your site.</div>';
   }
 }
 
-// ─── Render ───────────────────────────────────────────────────────────────────
-function re_render() {
-  const f = currentFilter;
-  if (f.type==='genre') filterGenre(f.value, null);
-  else if (f.type==='status') filterStatus(f.value, null);
-  else if (f.type==='letter') filterLetter(f.value);
-  else if (f.type==='search') doSearch();
+function checkTrackedUpdates(data){
+  const prev={};
+  try{Object.assign(prev,JSON.parse(localStorage.getItem('binds_prev')||'{}'));}catch(e){}
+  for(const g of data.games||[]){
+    if(!trackedIds.has(g.id)) continue;
+    const o=prev[g.id]; if(!o) continue;
+    if(!o.preOrderAvailable&&g.preOrderAvailable){pushNotif('🛒 PRE-ORDER LIVE: '+g.title,true);fireNotification('🛒 Pre-Order Live!',g.title+' is now available to pre-order!');}
+    if(o.releaseStatus!=='delayed'&&g.releaseStatus==='delayed'){pushNotif('⚠️ DELAYED: '+g.title,true);fireNotification('⚠️ Delayed!',g.title+' has been delayed.');}
+    if(!o.hasBeta&&g.hasBeta){pushNotif('🧪 BETA: '+g.title,true);fireNotification('🧪 Beta!',g.title+' beta announced!');}
+    if(o.releaseDate!==g.releaseDate&&g.releaseStatus!=='released'){pushNotif('📅 DATE CHANGE: '+g.title+' → '+g.releaseDate,true);fireNotification('📅 Date Changed!',g.title+' new date: '+g.releaseDate);}
+    if(o.releaseStatus!=='released'&&g.releaseStatus==='released'){pushNotif('✅ OUT NOW: '+g.title,true);fireNotification('✅ Out Now!',g.title+' is available!');}
+  }
+  const np={};
+  for(const g of data.games||[]) np[g.id]={preOrderAvailable:g.preOrderAvailable,releaseStatus:g.releaseStatus,releaseDate:g.releaseDate,hasBeta:g.hasBeta};
+  localStorage.setItem('binds_prev',JSON.stringify(np));
+}
+
+// ── Notifications ─────────────────────────────────────────────────────────────
+function checkNotifPermission(){
+  const btn=document.getElementById('notifEnableBtn');
+  if(!('Notification' in window)){btn.style.display='none';return;}
+  btn.style.display='';
+  if(Notification.permission==='granted'){btn.textContent='✅ Notifications ON';btn.classList.add('enabled');}
+  else if(Notification.permission==='denied'){btn.textContent='🚫 Blocked';btn.classList.add('enabled');}
+  else{btn.textContent='🔔 Enable Notifications';btn.classList.remove('enabled');}
+}
+async function requestNotifPermission(){
+  if(!('Notification' in window)){document.getElementById('notifEnableBtn').style.display='none';return;
+  }
+  if(Notification.permission==='granted'){showToast('✅','Already On','Notifications are already enabled!');return;}
+  if(Notification.permission==='denied'){showToast('🚫','Blocked','Notifications are blocked. Go to Settings → Safari → this site and allow notifications.');return;}
+  const r=await Notification.requestPermission();
+  if(r==='granted'){
+    const btn=document.getElementById('notifEnableBtn');btn.textContent='✅ Notifications ON';btn.classList.add('enabled');
+    fireNotification('🎮 Binds PS5 Tracker','Notifications enabled! Track games to get alerts.');
+    showToast('✅','Notifications Enabled!','You will now get alerts for tracked games!');
+  } else {showToast('⚠️','Blocked','Go to your browser settings and allow notifications for this site.');}
+}
+function fireNotification(title,body){
+  showToast('🎮',title,body); playNotifSound();
+  if(Notification.permission==='granted'){
+    try{new Notification(title,{body,tag:'ps5-tracker',renotify:true});}catch(e){}
+  }
+}
+function playNotifSound(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    [523.25,659.25,783.99,1046.50].forEach((f,i)=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);o.frequency.value=f;o.type='sine';
+      g.gain.setValueAtTime(0,ctx.currentTime+i*.12);
+      g.gain.linearRampToValueAtTime(.3,ctx.currentTime+i*.12+.02);
+      g.gain.linearRampToValueAtTime(0,ctx.currentTime+i*.12+.18);
+      o.start(ctx.currentTime+i*.12);o.stop(ctx.currentTime+i*.12+.2);
+    });
+  }catch(e){}
+}
+function showToast(icon,title,body){
+  document.getElementById('toastIcon').textContent=icon;
+  document.getElementById('toastTitle').textContent=title;
+  document.getElementById('toastBody').textContent=body;
+  const t=document.getElementById('toast');t.classList.add('show');
+  if(toastTimeout)clearTimeout(toastTimeout);
+  toastTimeout=setTimeout(()=>t.classList.remove('show'),5000);
+}
+function pushNotif(text,isNew){
+  notifications.unshift({text,time:new Date().toLocaleString(),isNew});
+  if(notifications.length>100)notifications.pop();
+  localStorage.setItem('binds_notifs_'+currentUser?.id,JSON.stringify(notifications));
+  updateBell();renderNotifs();
+}
+function updateBell(){const n=notifications.filter(x=>x.isNew).length;const b=document.getElementById('bellBadge');b.textContent=n;b.style.display=n>0?'block':'none';}
+function renderNotifs(){
+  const l=document.getElementById('notifList');
+  if(!notifications.length){l.innerHTML='<div class="notif-empty">No alerts yet. Track games!</div>';return;}
+  l.innerHTML=notifications.map(n=>`<div class="notif-item"><div class="notif-dot ${n.isNew?'new':''}"></div><div><div class="notif-text">${esc(n.text)}</div><div class="notif-time">${esc(n.time)}</div></div></div>`).join('');
+}
+function toggleNotifs(){
+  const p=document.getElementById('notifPanel');p.classList.toggle('show');
+  if(p.classList.contains('show')){notifications=notifications.map(n=>({...n,isNew:false}));localStorage.setItem('binds_notifs_'+currentUser?.id,JSON.stringify(notifications));updateBell();renderNotifs();}
+}
+
+// ── Filters & render ──────────────────────────────────────────────────────────
+function buildAlpha(){
+  const has=new Set(ALL_GAMES.map(g=>g.title[0].toUpperCase()));
+  document.getElementById('alphaBar').innerHTML='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l=>
+    `<button class="alpha-btn${has.has(l)?' has-games':''}" onclick="filterLetter('${l}')" id="al_${l}">${l}</button>`
+  ).join('');
+}
+function clearAll(){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));document.querySelectorAll('.alpha-btn').forEach(b=>b.classList.remove('on'));}
+function showAll(el){currentFilter={type:'all',value:''};document.getElementById('gameInput').value='';clearAll();el&&el.classList.add('on');renderGames(ALL_GAMES);}
+function filterGenre(g,el){currentFilter={type:'genre',value:g};clearAll();el&&el.classList.add('on');renderGames(g?ALL_GAMES.filter(x=>x.genre===g):ALL_GAMES);}
+function filterStatus(s,el){
+  currentFilter={type:'status',value:s};clearAll();el&&el.classList.add('on');
+  const m={delayed:x=>x.releaseStatus==='delayed',preorder:x=>x.preOrderAvailable,beta:x=>x.hasBeta,released:x=>x.releaseStatus==='released',upcoming:x=>x.releaseStatus!=='released'&&x.releaseStatus!=='cancelled'};
+  renderGames(m[s]?ALL_GAMES.filter(m[s]):ALL_GAMES);
+}
+function filterLetter(l){currentFilter={type:'letter',value:l};clearAll();document.getElementById('al_'+l)?.classList.add('on');renderGames(ALL_GAMES.filter(x=>x.title[0].toUpperCase()===l));}
+function doSearch(){
+  const q=document.getElementById('gameInput').value.trim().toLowerCase();
+  if(!q){showAll();return;}
+  currentFilter={type:'search',value:q};clearAll();
+  renderGames(ALL_GAMES.filter(g=>g.title.toLowerCase().includes(q)||(g.tags||[]).some(t=>t.includes(q))||g.description.toLowerCase().includes(q)||g.developer.toLowerCase().includes(q)||g.genre.toLowerCase().includes(q)));
+}
+document.getElementById('gameInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
+function rerender(){
+  const f=currentFilter;
+  if(f.type==='genre')filterGenre(f.value,null);
+  else if(f.type==='status')filterStatus(f.value,null);
+  else if(f.type==='letter')filterLetter(f.value);
+  else if(f.type==='search')doSearch();
   else renderGames(ALL_GAMES);
 }
+const GB={horror:'bh',action:'ba',rpg:'br',shooter:'bsh',sports:'bsp',adventure:'bad',fighting:'bf'};
+function gB(g){return GB[g?.toLowerCase()]||'btba';}
+function sC(s){return s==='released'?'b':s==='on-track'?'g':(s==='delayed'||s==='cancelled')?'r':'a';}
+function sL(s){return{['on-track']:'On Track',delayed:'Delayed',released:'Out Now',tba:'TBA',cancelled:'Cancelled'}[s]||s;}
+function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):'—';}
 
-const GENRE_BADGE = {horror:'bh',action:'ba',rpg:'br',shooter:'bsh',sports:'bsp',adventure:'bad',fighting:'bf'};
-function gBadge(g) { return GENRE_BADGE[g?.toLowerCase()]||'btba'; }
-function sColor(s) {
-  if (s==='released') return 'b';
-  if (s==='on-track') return 'g';
-  if (s==='delayed'||s==='cancelled') return 'r';
-  return 'a';
-}
-function sLabel(s) {
-  return {['on-track']:'On Track',delayed:'Delayed',released:'Out Now',tba:'TBA',cancelled:'Cancelled'}[s]||s;
-}
-function esc(s) {
-  return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '—';
+function renderGames(games){
+  const res=document.getElementById('results');
+  if(!games.length){res.innerHTML='<div class="empty">🎮 No games found.</div>';return;}
+  res.innerHTML=`<div class="cnt">${games.length} game${games.length!==1?'s':''} found</div>`+
+  games.map(g=>{
+    const iT=trackedIds.has(g.id);
+    return`<div class="rcard${iT?' tracked':''}">
+    <div class="ct tl"></div><div class="ct tr"></div>
+    <div class="rtitle">🎮 ${esc(g.title)}
+      <span class="badge ${gB(g.genre)}">${esc(g.genre)}</span>
+      ${g.ps5Exclusive?'<span class="badge bex">PS5 Exclusive</span>':''}
+      ${g.releaseStatus==='delayed'?'<span class="badge bdel">⚠ Delayed</span>':''}
+      ${g.hasBeta?'<span class="badge bbeta">Beta</span>':''}
+    </div>
+    <div class="rmeta">${esc(g.developer)} · ${esc(g.publisher||'')} · ${esc(g.platforms)}</div>
+    <div class="info-grid">
+      <div class="ibox"><div class="ilab">📅 Release Date</div><div class="ival ${sC(g.releaseStatus)}">${esc(g.releaseDate||'TBA')}</div></div>
+      <div class="ibox"><div class="ilab">📡 Status</div><div class="ival ${sC(g.releaseStatus)}">${sL(g.releaseStatus)}</div></div>
+      <div class="ibox"><div class="ilab">🛒 Pre-Order</div><div class="ival ${g.preOrderAvailable?'g':'a'}">${g.preOrderAvailable?'✅ Live Now':(g.preOrderDate?esc(g.preOrderDate):'Not Yet')}</div></div>
+      ${g.preOrderPrice?`<div class="ibox"><div class="ilab">🏷️ Price</div><div class="ival">${esc(g.preOrderPrice)}</div></div>`:''}
+      ${g.metacriticScore?`<div class="ibox"><div class="ilab">⭐ Metacritic</div><div class="ival b">${esc(g.metacriticScore)}/100</div></div>`:''}
+      <div class="ibox"><div class="ilab">📀 Editions</div><div class="ival">${[g.physicalEdition&&'Disc',g.digitalEdition&&'Digital'].filter(Boolean).join(' + ')||'?'}</div></div>
+    </div>
+    <div class="desc">${esc(g.description)}</div>
+    ${g.delayInfo?`<div class="dline"><b>⚠️ Delay:</b> ${esc(g.delayInfo)}</div>`:''}
+    ${g.betaDate?`<div class="dline"><b>🧪 Beta:</b> ${esc(g.betaDate)}</div>`:''}
+    ${g.preOrderBonus?`<div class="dline"><b>🎁 Pre-order Bonus:</b> ${esc(g.preOrderBonus)}</div>`:''}
+    ${g.preOrderLinks?`<div class="dline"><b>🔗 Where to Pre-order:</b> ${esc(g.preOrderLinks)}</div>`:''}
+    <div class="card-footer">
+      <button class="track-btn${iT?' tracked':''}" onclick="toggleTrack('${g.id.replace(/'/g,"\\'")}','${g.title.replace(/'/g,"\\'")}')">
+        ${iT?'✅ Tracking':'🔔 Track this game'}
+      </button>
+      <span style="font-size:9px;color:#1e2a6e">${iT?'Synced across all your devices':'Track for alerts on all devices'}</span>
+    </div>
+  </div>`;}).join('')+
+  `<div class="src">ℹ️ Data auto-updated daily · Always verify on PlayStation Store</div>`;
 }
 
-function renderGames(games) {
-  const res = document.getElementById('results');
-  if (!games.length) {
-    res.innerHTML = '<div class="empty">🎮 No games found. Try a different search or filter.</div>';
+// ── Reset password ───────────────────────────────────────────────────────────
+async function doResetPassword(){
+  const pass=document.getElementById('resetPass').value;
+  const pass2=document.getElementById('resetPass2').value;
+  const errEl=document.getElementById('resetErr');
+  const okEl=document.getElementById('resetOk');
+  errEl.textContent=''; okEl.textContent='';
+  if(pass.length<6){errEl.textContent='Password must be at least 6 characters.';return;}
+  if(pass.length>16){errEl.textContent='Password cannot be more than 16 characters.';return;}
+  if(pass!==pass2){errEl.textContent='Passwords do not match.';return;}
+
+  // Try to get session from URL hash tokens first
+  const hash = window.location.hash;
+  const hashParams = new URLSearchParams(hash.replace('#',''));
+  const accessToken = hashParams.get('access_token');
+  const refreshToken = hashParams.get('refresh_token');
+
+  if(accessToken){
+    // Set session from tokens in URL
+    const {error:sessionError} = await sb.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken || ''
+    });
+    if(sessionError){errEl.textContent='Session expired. Please request a new reset email.';return;}
+  }
+
+  const {error}=await sb.auth.updateUser({password:pass});
+  if(error){
+    if(error.message.includes('session')||error.message.includes('Auth')){
+      errEl.textContent='Link expired. Please go back and request a new password reset email.';
+    } else {
+      errEl.textContent=error.message;
+    }
     return;
   }
-  res.innerHTML =
-    `<div class="cnt">${games.length} game${games.length!==1?'s':''} found</div>` +
-    games.map(g => {
-      const isTracked = !!tracked[g.id];
-      return `
-      <div class="rcard ${isTracked?'tracked':''}">
-        <div class="ct tl"></div><div class="ct tr"></div>
-        <div class="rtitle">
-          🎮 ${esc(g.title)}
-          <span class="badge ${gBadge(g.genre)}">${esc(g.genre)}</span>
-          ${g.ps5Exclusive ? '<span class="badge bex">PS5 Exclusive</span>' : ''}
-          ${g.releaseStatus==='delayed' ? '<span class="badge bdel">⚠ Delayed</span>' : ''}
-          ${g.hasBeta ? '<span class="badge bbeta">Beta</span>' : ''}
-        </div>
-        <div class="rmeta">${esc(g.developer)} · ${esc(g.publisher||'')} · ${esc(g.platforms)}</div>
-        <div class="info-grid">
-          <div class="ibox">
-            <div class="ilab">📅 Release Date</div>
-            <div class="ival ${sColor(g.releaseStatus)}">${esc(g.releaseDate||'TBA')}</div>
-          </div>
-          <div class="ibox">
-            <div class="ilab">📡 Status</div>
-            <div class="ival ${sColor(g.releaseStatus)}">${sLabel(g.releaseStatus)}</div>
-          </div>
-          <div class="ibox">
-            <div class="ilab">🛒 Pre-Order</div>
-            <div class="ival ${g.preOrderAvailable?'g':'a'}">${g.preOrderAvailable?'✅ Live Now':(g.preOrderDate?esc(g.preOrderDate):'Not Yet')}</div>
-          </div>
-          ${g.preOrderPrice ? `<div class="ibox"><div class="ilab">🏷️ Price</div><div class="ival">${esc(g.preOrderPrice)}</div></div>` : ''}
-          ${g.metacriticScore ? `<div class="ibox"><div class="ilab">⭐ Metacritic</div><div class="ival b">${esc(g.metacriticScore)}/100</div></div>` : ''}
-          <div class="ibox">
-            <div class="ilab">📀 Editions</div>
-            <div class="ival">${[g.physicalEdition&&'Disc',g.digitalEdition&&'Digital'].filter(Boolean).join(' + ')||'?'}</div>
-          </div>
-        </div>
-        <div class="desc">${esc(g.description)}</div>
-        ${g.delayInfo ? `<div class="dline"><b>⚠️ Delay:</b> ${esc(g.delayInfo)}</div>` : ''}
-        ${g.betaDate ? `<div class="dline"><b>🧪 Beta:</b> ${esc(g.betaDate)}</div>` : ''}
-        ${g.preOrderBonus ? `<div class="dline"><b>🎁 Pre-order Bonus:</b> ${esc(g.preOrderBonus)}</div>` : ''}
-        ${g.preOrderLinks ? `<div class="dline"><b>🔗 Where to Pre-order:</b> ${esc(g.preOrderLinks)}</div>` : ''}
-        <div class="card-footer">
-          <button class="track-btn ${isTracked?'tracked':''}"
-            onclick="toggleTrack('${g.id.replace(/'/g,"\\'")}','${g.title.replace(/'/g,"\\'")}')">
-            ${isTracked ? '✅ Tracking' : '🔔 Track this game'}
-          </button>
-          <span style="font-size:9px;color:#1e2a6e">${isTracked ? 'Alerts ON — will notify on updates' : 'Get alerts for delays, pre-orders & betas'}</span>
-        </div>
-      </div>`;
-    }).join('') +
-    `<div class="src">ℹ️ Data auto-updated daily · Sources: PlayStation Blog, Gematsu, Push Square · Always verify on PlayStation Store</div>`;
+  okEl.textContent='✅ Password updated! You can now sign in.';
+  await sb.auth.signOut();
+  setTimeout(()=>showView('loginView'), 2000);
 }
 
-// ─── Init ─────────────────────────────────────────────────────────────────────
-updateBell();
-renderNotifs();
-loadGames();
+// ── Account Settings ─────────────────────────────────────────────────────────
+function toggleAccSection(id){
+  const sec=document.getElementById(id);
+  const isOpen=sec.classList.contains('open');
+  document.querySelectorAll('.acc-section').forEach(s=>s.classList.remove('open'));
+  if(!isOpen) sec.classList.add('open');
+}
+function openAccountSettings(){
+  document.getElementById('accountModal').style.display='flex';
+  document.querySelectorAll('.acc-section').forEach(s=>s.classList.remove('open'));
+  document.getElementById('newPass').value='';
+  document.getElementById('newPass2').value='';
+  document.getElementById('newEmail').value='';
+  document.getElementById('newEmail2').value='';
+  document.getElementById('passErr').textContent='';
+  document.getElementById('passOk').textContent='';
+  document.getElementById('emailErr').textContent='';
+  document.getElementById('emailOk').textContent='';
+}
+function closeAccountSettings(){
+  document.getElementById('accountModal').style.display='none';
+}
+
+async function changePassword(){
+  const p1=document.getElementById('newPass').value;
+  const p2=document.getElementById('newPass2').value;
+  const errEl=document.getElementById('passErr');
+  const okEl=document.getElementById('passOk');
+  errEl.textContent=''; okEl.textContent='';
+  if(p1.length<6){errEl.textContent='Password must be at least 6 characters.';return;}
+  if(p1.length>16){errEl.textContent='Password cannot be more than 16 characters.';return;}
+  if(p1!==p2){errEl.textContent='Passwords do not match.';return;}
+  const {error}=await sb.auth.updateUser({password:p1});
+  if(error){errEl.textContent=error.message;return;}
+  okEl.textContent='✅ Password updated successfully!';
+  document.getElementById('newPass').value='';
+  document.getElementById('newPass2').value='';
+}
+
+async function changeEmail(){
+  const e1=document.getElementById('newEmail').value.trim();
+  const e2=document.getElementById('newEmail2').value.trim();
+  const errEl=document.getElementById('emailErr');
+  const okEl=document.getElementById('emailOk');
+  errEl.textContent=''; okEl.textContent='';
+  if(!e1){errEl.textContent='Please enter an email address.';return;}
+  if(e1!==e2){errEl.textContent='Email addresses do not match. Please double check.';return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e1)){errEl.textContent='Please enter a valid email address.';return;}
+  // Update in profiles table
+  const {error}=await sb.from('profiles').update({email:e1}).eq('id',currentUser.id);
+  if(error){errEl.textContent=error.message;return;}
+  okEl.textContent='✅ Email updated successfully!';
+  document.getElementById('newEmail').value='';
+  document.getElementById('newEmail2').value='';
+}
+
+// ── Background lock/ban check ────────────────────────────────────────────────
+async function checkLockBan(){
+  if(!currentUser) return;
+  const {data:p}=await sb.from('profiles').select('locked,banned').eq('id',currentUser.id).maybeSingle();
+  if(!p) return;
+  if(p.banned||p.locked){
+    await sb.auth.signOut();
+    currentUser=null; currentUsername=''; trackedIds=new Set(); notifications=[];
+    document.getElementById('appScreen').style.display='none';
+    document.getElementById('authScreen').style.display='flex';
+    document.getElementById('loginErr').textContent=p.banned?'⛔ This account has been permanently banned.':'🔒 This account has been locked. Please contact support.';
+    showView('loginView');
+  }
+}
+// Check every 5 seconds
+setInterval(checkLockBan, 5000);
+// Also listen via realtime for instant kick
+function startLockListener(){
+  if(!currentUser) return;
+  sb.channel('lock-watch-'+currentUser.id)
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles',filter:'id=eq.'+currentUser.id},
+      (payload)=>{
+        if(payload.new.locked||payload.new.banned) checkLockBan();
+      }
+    ).subscribe();
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+(async()=>{
+  // Detect reset link — Supabase puts token in URL hash
+  const hash = window.location.hash;
+  const params = new URLSearchParams(window.location.search);
+  const hashParams = new URLSearchParams(hash.replace('#',''));
+  
+  const isReset = 
+    hashParams.get('type')==='recovery' ||
+    params.get('type')==='recovery' ||
+    hash.includes('type=recovery') ||
+    params.get('reset')==='1';
+
+  if(isReset){
+    // Set session from URL tokens so updateUser works
+    const accessToken = hashParams.get('access_token');
+    const refreshToken = hashParams.get('refresh_token');
+    if(accessToken){
+      await sb.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken || ''
+      });
+    }
+    document.getElementById('authScreen').style.display='flex';
+    document.getElementById('appScreen').style.display='none';
+    showView('resetView');
+  } else {
+    const {data:{session}}=await sb.auth.getSession();
+    if(session?.user) await onLogin(session.user);
+  }
+
+  sb.auth.onAuthStateChange(async(event,session)=>{
+    if(event==='PASSWORD_RECOVERY'){
+      document.getElementById('authScreen').style.display='flex';
+      document.getElementById('appScreen').style.display='none';
+      showView('resetView');
+    } else if(event==='SIGNED_IN'&&session?.user&&!currentUser){
+      if(document.getElementById('resetView').style.display!=='none') return;
+      await onLogin(session.user);
+    } else if(event==='SIGNED_OUT'){
+      document.getElementById('appScreen').style.display='none';
+      document.getElementById('authScreen').style.display='flex';
+    }
+  });
+})();
+  // ── Service Worker ───────────────────────────────────────────────────────────
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
+  }
 </script>
 </body>
 </html>

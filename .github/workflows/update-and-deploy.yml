@@ -2,7 +2,7 @@ name: Auto-Update & Deploy PS5 Tracker
 
 on:
   schedule:
-    - cron: '0 8 * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -17,11 +17,30 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run game updater script
+        run: python ps5-tracker/scripts/update_games.py
+
+      - name: Commit updated games.json if changed
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add ps5-tracker/ps5-tracker/public/games.json
+          git diff --cached --quiet || git commit -m "Auto-update games.json"
+          git push
+
       - name: Copy files for Cloudflare deploy
         run: |
           mkdir -p deploy
-          find . -name "games.json" -not -path "./deploy/*" | head -1 | xargs -I{} cp {} deploy/games.json
-          find . -name "index.html" -not -path "./deploy/*" | head -1 | xargs -I{} cp {} deploy/index.html
+          cp ps5-tracker/ps5-tracker/public/games.json deploy/games.json
+          cp ps5-tracker/ps5-tracker/public/index.html deploy/index.html
           echo "Files ready:"
           ls -la deploy/
 

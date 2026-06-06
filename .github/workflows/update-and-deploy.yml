@@ -32,15 +32,15 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add ps5-tracker/ps5-tracker/public/games.json
+          git add ps5-tracker/public/games.json
           git diff --cached --quiet || git commit -m "Auto-update games.json"
           git push
 
       - name: Copy files for Cloudflare deploy
         run: |
           mkdir -p deploy
-          cp ps5-tracker/ps5-tracker/public/games.json deploy/games.json
-          cp ps5-tracker/ps5-tracker/public/index.html deploy/index.html
+          cp ps5-tracker/public/games.json deploy/games.json
+          cp ps5-tracker/public/index.html deploy/index.html
           echo "Files ready:"
           ls -la deploy/
 

@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-06-01T00:00:00Z",
-  "updatedBy": "Binds PS5 Tracker",
+  "lastUpdated": "2026-06-06T20:38:31Z",
+  "updatedBy": "Binds PS5 Tracker Auto-Updater",
   "games": [
     {
       "id": "halloween",
@@ -9,11 +9,11 @@
       "releaseDate": "Sep 8, 2026",
       "releaseStatus": "on-track",
       "delayInfo": null,
-      "preOrderAvailable": false,
-      "preOrderDate": "Not announced yet",
+      "preOrderAvailable": true,
+      "preOrderDate": "Now available",
       "preOrderPrice": "TBA",
       "preOrderBonus": null,
-      "preOrderLinks": "PlayStation Store (when live)",
+      "preOrderLinks": "PlayStation Store",
       "platforms": "PS5, Xbox Series, PC",
       "developer": "IllFonic",
       "publisher": "IllFonic / Gun Interactive",
@@ -24,15 +24,25 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["michael myers", "slasher", "asymmetric", "multiplayer", "halloween", "horror"],
-      "sources": ["https://www.gematsu.com/2025/09/halloween-game-launches-september-8-2026", "https://blog.playstation.com/2025/09/24/halloween-launches-sept-8-2026-on-ps5-first-gameplay-revealed/"]
+      "tags": [
+        "michael myers",
+        "slasher",
+        "asymmetric",
+        "multiplayer",
+        "halloween",
+        "horror"
+      ],
+      "sources": [
+        "https://www.gematsu.com/2025/09/halloween-game-launches-september-8-2026",
+        "https://blog.playstation.com/2025/09/24/halloween-launches-sept-8-2026-on-ps5-first-gameplay-revealed/"
+      ]
     },
     {
       "id": "gta6",
       "title": "Grand Theft Auto VI",
       "genre": "action",
       "releaseDate": "Nov 19, 2026",
-      "releaseStatus": "delayed",
+      "releaseStatus": "released",
       "delayInfo": "Delayed TWICE — originally Fall 2025, then May 26 2026, now confirmed November 19 2026. Pre-orders NOT open yet as of June 2026. Expected to open Summer 2026 alongside marketing campaign. DO NOT trust unofficial pre-order pages.",
       "preOrderAvailable": false,
       "preOrderDate": "Summer 2026 (expected, not confirmed)",
@@ -49,8 +59,18 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["gta", "rockstar", "open world", "vice city", "lucia", "gta6", "grand theft auto"],
-      "sources": ["https://www.dexerto.com/gta/grand-theft-auto-vi-delay-rumors-debunked-3367086/"]
+      "tags": [
+        "gta",
+        "rockstar",
+        "open world",
+        "vice city",
+        "lucia",
+        "gta6",
+        "grand theft auto"
+      ],
+      "sources": [
+        "https://www.dexerto.com/gta/grand-theft-auto-vi-delay-rumors-debunked-3367086/"
+      ]
     },
     {
       "id": "silent-hill-f",
@@ -74,7 +94,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["silent hill", "konami", "psychological", "fog", "japan", "horror"],
+      "tags": [
+        "silent hill",
+        "konami",
+        "psychological",
+        "fog",
+        "japan",
+        "horror"
+      ],
       "sources": []
     },
     {
@@ -99,7 +126,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["silent hill", "konami", "remake", "pyramid head", "james sunderland", "horror"],
+      "tags": [
+        "silent hill",
+        "konami",
+        "remake",
+        "pyramid head",
+        "james sunderland",
+        "horror"
+      ],
       "sources": []
     },
     {
@@ -124,7 +158,14 @@
       "ps5Exclusive": true,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["samurai", "open world", "japan", "sucker punch", "ghost", "exclusive"],
+      "tags": [
+        "samurai",
+        "open world",
+        "japan",
+        "sucker punch",
+        "ghost",
+        "exclusive"
+      ],
       "sources": []
     },
     {
@@ -132,7 +173,7 @@
       "title": "Call of Duty: Black Ops 7",
       "genre": "shooter",
       "releaseDate": "Late 2025",
-      "releaseStatus": "on-track",
+      "releaseStatus": "released",
       "delayInfo": null,
       "preOrderAvailable": false,
       "preOrderDate": "TBA",
@@ -149,7 +190,16 @@
       "ps5Exclusive": false,
       "hasBeta": true,
       "betaDate": "Beta typically 1-2 months before launch",
-      "tags": ["cod", "call of duty", "treyarch", "zombies", "warzone", "multiplayer", "black ops", "shooter"],
+      "tags": [
+        "cod",
+        "call of duty",
+        "treyarch",
+        "zombies",
+        "warzone",
+        "multiplayer",
+        "black ops",
+        "shooter"
+      ],
       "sources": []
     },
     {
@@ -159,8 +209,8 @@
       "releaseDate": "2026",
       "releaseStatus": "on-track",
       "delayInfo": null,
-      "preOrderAvailable": false,
-      "preOrderDate": "TBA",
+      "preOrderAvailable": true,
+      "preOrderDate": "Now available",
       "preOrderPrice": "$69.99",
       "preOrderBonus": null,
       "preOrderLinks": "PlayStation Store",
@@ -174,7 +224,14 @@
       "ps5Exclusive": true,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["marvel", "wolverine", "insomniac", "exclusive", "xmen", "superhero"],
+      "tags": [
+        "marvel",
+        "wolverine",
+        "insomniac",
+        "exclusive",
+        "xmen",
+        "superhero"
+      ],
       "sources": []
     },
     {
@@ -199,7 +256,13 @@
       "ps5Exclusive": true,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["kojima", "strand", "norman reedus", "exclusive", "death stranding"],
+      "tags": [
+        "kojima",
+        "strand",
+        "norman reedus",
+        "exclusive",
+        "death stranding"
+      ],
       "sources": []
     },
     {
@@ -207,7 +270,7 @@
       "title": "Resident Evil 9",
       "genre": "horror",
       "releaseDate": "TBA 2025/2026",
-      "releaseStatus": "tba",
+      "releaseStatus": "released",
       "delayInfo": null,
       "preOrderAvailable": false,
       "preOrderDate": null,
@@ -224,7 +287,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["capcom", "resident evil", "survival horror", "zombies", "biohazard", "horror"],
+      "tags": [
+        "capcom",
+        "resident evil",
+        "survival horror",
+        "zombies",
+        "biohazard",
+        "horror"
+      ],
       "sources": []
     },
     {
@@ -249,7 +319,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["capcom", "monster hunter", "open world", "co-op", "action"],
+      "tags": [
+        "capcom",
+        "monster hunter",
+        "open world",
+        "co-op",
+        "action"
+      ],
       "sources": []
     },
     {
@@ -274,7 +350,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["indie", "turn based", "painterly", "sandfall", "rpg"],
+      "tags": [
+        "indie",
+        "turn based",
+        "painterly",
+        "sandfall",
+        "rpg"
+      ],
       "sources": []
     },
     {
@@ -299,7 +381,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["id software", "fps", "slayer", "bethesda", "doom", "shooter"],
+      "tags": [
+        "id software",
+        "fps",
+        "slayer",
+        "bethesda",
+        "doom",
+        "shooter"
+      ],
       "sources": []
     },
     {
@@ -324,7 +413,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["ubisoft", "japan", "feudal", "shinobi", "assassin", "creed"],
+      "tags": [
+        "ubisoft",
+        "japan",
+        "feudal",
+        "shinobi",
+        "assassin",
+        "creed"
+      ],
       "sources": []
     },
     {
@@ -349,7 +445,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["square enix", "final fantasy", "cloud", "jrpg", "open world", "ff7"],
+      "tags": [
+        "square enix",
+        "final fantasy",
+        "cloud",
+        "jrpg",
+        "open world",
+        "ff7"
+      ],
       "sources": []
     },
     {
@@ -374,7 +477,14 @@
       "ps5Exclusive": false,
       "hasBeta": true,
       "betaDate": "Beta held — game now released",
-      "tags": ["gearbox", "looter shooter", "vault hunter", "2k", "co-op", "borderlands"],
+      "tags": [
+        "gearbox",
+        "looter shooter",
+        "vault hunter",
+        "2k",
+        "co-op",
+        "borderlands"
+      ],
       "sources": []
     },
     {
@@ -399,7 +509,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["vampire", "dark fantasy", "rebel wolves", "cdpr", "medieval", "rpg"],
+      "tags": [
+        "vampire",
+        "dark fantasy",
+        "rebel wolves",
+        "cdpr",
+        "medieval",
+        "rpg"
+      ],
       "sources": []
     },
     {
@@ -407,7 +524,7 @@
       "title": "Judas",
       "genre": "shooter",
       "releaseDate": "TBA 2026",
-      "releaseStatus": "tba",
+      "releaseStatus": "released",
       "delayInfo": null,
       "preOrderAvailable": false,
       "preOrderDate": null,
@@ -424,7 +541,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["ken levine", "bioshock", "2k", "space station", "fps", "judas"],
+      "tags": [
+        "ken levine",
+        "bioshock",
+        "2k",
+        "space station",
+        "fps",
+        "judas"
+      ],
       "sources": []
     },
     {
@@ -449,7 +573,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["bandai", "fighting", "tekken", "3d fighter", "competitive"],
+      "tags": [
+        "bandai",
+        "fighting",
+        "tekken",
+        "3d fighter",
+        "competitive"
+      ],
       "sources": []
     },
     {
@@ -474,7 +604,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["wrestling", "wwe", "2k", "sports", "john cena"],
+      "tags": [
+        "wrestling",
+        "wwe",
+        "2k",
+        "sports",
+        "john cena"
+      ],
       "sources": []
     },
     {
@@ -499,7 +635,13 @@
       "ps5Exclusive": false,
       "hasBeta": true,
       "betaDate": "Beta held — game now released",
-      "tags": ["fromsoft", "soulslike", "co-op", "roguelite", "elden ring"],
+      "tags": [
+        "fromsoft",
+        "soulslike",
+        "co-op",
+        "roguelite",
+        "elden ring"
+      ],
       "sources": []
     },
     {
@@ -524,7 +666,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["2k", "crime", "sicily", "1900s", "mafia"],
+      "tags": [
+        "2k",
+        "crime",
+        "sicily",
+        "1900s",
+        "mafia"
+      ],
       "sources": []
     },
     {
@@ -532,7 +680,7 @@
       "title": "Crimson Desert",
       "genre": "action",
       "releaseDate": "2026",
-      "releaseStatus": "on-track",
+      "releaseStatus": "released",
       "delayInfo": null,
       "preOrderAvailable": false,
       "preOrderDate": "TBA",
@@ -549,7 +697,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["pearl abyss", "open world", "medieval", "fantasy", "action rpg"],
+      "tags": [
+        "pearl abyss",
+        "open world",
+        "medieval",
+        "fantasy",
+        "action rpg"
+      ],
       "sources": []
     },
     {
@@ -574,7 +728,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["interactive horror", "butterfly effect", "remake", "sony", "until dawn"],
+      "tags": [
+        "interactive horror",
+        "butterfly effect",
+        "remake",
+        "sony",
+        "until dawn"
+      ],
       "sources": []
     },
     {
@@ -599,7 +759,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["fnaf", "five nights", "freddy", "pixel", "indie horror"],
+      "tags": [
+        "fnaf",
+        "five nights",
+        "freddy",
+        "pixel",
+        "indie horror"
+      ],
       "sources": []
     },
     {
@@ -624,7 +790,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["silent hill creator", "bokeh", "hong kong", "possession", "horror"],
+      "tags": [
+        "silent hill creator",
+        "bokeh",
+        "hong kong",
+        "possession",
+        "horror"
+      ],
       "sources": []
     },
     {
@@ -649,7 +821,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["killer klowns", "asymmetric", "multiplayer", "cult film", "horror"],
+      "tags": [
+        "killer klowns",
+        "asymmetric",
+        "multiplayer",
+        "cult film",
+        "horror"
+      ],
       "sources": []
     },
     {
@@ -674,7 +852,14 @@
       "ps5Exclusive": true,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["team ninja", "samurai", "edo period", "open world", "exclusive", "ronin"],
+      "tags": [
+        "team ninja",
+        "samurai",
+        "edo period",
+        "open world",
+        "exclusive",
+        "ronin"
+      ],
       "sources": []
     },
     {
@@ -682,7 +867,7 @@
       "title": "Lies of P: Overture",
       "genre": "action",
       "releaseDate": "2026",
-      "releaseStatus": "on-track",
+      "releaseStatus": "released",
       "delayInfo": null,
       "preOrderAvailable": false,
       "preOrderDate": "TBA",
@@ -699,7 +884,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["soulslike", "pinocchio", "neowiz", "prequel", "lies of p"],
+      "tags": [
+        "soulslike",
+        "pinocchio",
+        "neowiz",
+        "prequel",
+        "lies of p"
+      ],
       "sources": []
     },
     {
@@ -724,7 +915,13 @@
       "ps5Exclusive": false,
       "hasBeta": true,
       "betaDate": "Beta held — game now released",
-      "tags": ["bungie", "extraction shooter", "sci-fi", "multiplayer", "marathon"],
+      "tags": [
+        "bungie",
+        "extraction shooter",
+        "sci-fi",
+        "multiplayer",
+        "marathon"
+      ],
       "sources": []
     },
     {
@@ -749,7 +946,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["obsidian", "sci-fi", "rpg", "choices", "fallout-like", "outer worlds"],
+      "tags": [
+        "obsidian",
+        "sci-fi",
+        "rpg",
+        "choices",
+        "fallout-like",
+        "outer worlds"
+      ],
       "sources": []
     },
     {
@@ -774,7 +978,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["indiana jones", "bethesda", "machineGames", "first person", "adventure"],
+      "tags": [
+        "indiana jones",
+        "bethesda",
+        "machineGames",
+        "first person",
+        "adventure"
+      ],
       "sources": []
     },
     {
@@ -782,7 +992,7 @@
       "title": "Ninja Gaiden 4",
       "genre": "action",
       "releaseDate": "2026",
-      "releaseStatus": "on-track",
+      "releaseStatus": "released",
       "delayInfo": null,
       "preOrderAvailable": false,
       "preOrderDate": "TBA",
@@ -799,7 +1009,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["team ninja", "hack and slash", "ninja", "koei tecmo", "ninja gaiden"],
+      "tags": [
+        "team ninja",
+        "hack and slash",
+        "ninja",
+        "koei tecmo",
+        "ninja gaiden"
+      ],
       "sources": []
     },
     {
@@ -824,7 +1040,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["hoyo", "free to play", "gacha", "stylish", "urban", "zenless"],
+      "tags": [
+        "hoyo",
+        "free to play",
+        "gacha",
+        "stylish",
+        "urban",
+        "zenless"
+      ],
       "sources": []
     },
     {
@@ -832,7 +1055,7 @@
       "title": "Virtua Fighter 6",
       "genre": "fighting",
       "releaseDate": "2026",
-      "releaseStatus": "on-track",
+      "releaseStatus": "released",
       "delayInfo": null,
       "preOrderAvailable": false,
       "preOrderDate": "TBA",
@@ -849,7 +1072,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["sega", "virtua fighter", "3d fighter", "competitive", "fighting"],
+      "tags": [
+        "sega",
+        "virtua fighter",
+        "3d fighter",
+        "competitive",
+        "fighting"
+      ],
       "sources": []
     }
   ]

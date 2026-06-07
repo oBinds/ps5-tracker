@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Binds PS5 Tracker - Auto Updater v3
-Uses Playwright (real browser) to check PlayStation Store directly.
+Binds PS5 Tracker - Auto Updater v4
+Uses IsThereAnyDeal API for real price/preorder data.
 Runs every 5 minutes via GitHub Actions.
 """
 
@@ -9,32 +9,34 @@ import json
 import os
 import re
 import urllib.request
-import asyncio
+import urllib.parse
 from datetime import datetime, timezone
 from xml.etree import ElementTree
 
 GAMES_PATH = "ps5-tracker/public/games.json"
+ITAD_API_KEY = os.environ.get("ITAD_API_KEY", "")
+ITAD_BASE = "https://api.isthereanydeal.com"
 
-# PlayStation Store search URLs per game
-PS_STORE_SEARCHES = {
-    "halloween":            "halloween the game illfonic",
-    "gta6":                 "grand theft auto VI",
-    "wolverine":            "marvel wolverine ps5",
-    "silent-hill-f":        "silent hill f",
-    "resident-evil-9":      "resident evil 9",
-    "ghost-of-yotei":       "ghost of yotei",
-    "call-of-duty-bo7":     "call of duty black ops 7",
-    "blood-of-dawnwalker":  "blood of dawnwalker",
-    "crimson-desert":       "crimson desert",
-    "judas":                "judas game 2k",
-    "ninja-gaiden-4":       "ninja gaiden 4",
-    "virtua-fighter-6":     "virtua fighter 6",
-    "lies-of-p-overture":   "lies of p overture",
-    "predator-badlands":    "predator badlands",
-    "ea-sports-fc-26":      "ea sports fc 26",
-    "wwe-2k27":             "wwe 2k27",
-    "hollow-knight-silksong": "hollow knight silksong",
-    "final-fantasy-7-remake-part3": "final fantasy VII remake part 3",
+# ITAD search titles per game ID
+ITAD_TITLES = {
+    "halloween":            "Halloween The Game",
+    "gta6":                 "Grand Theft Auto VI",
+    "wolverine":            "Marvel's Wolverine",
+    "silent-hill-f":        "Silent Hill f",
+    "resident-evil-9":      "Resident Evil 9",
+    "ghost-of-yotei":       "Ghost of Yotei",
+    "call-of-duty-bo7":     "Call of Duty Black Ops 7",
+    "blood-of-dawnwalker":  "Blood of Dawnwalker",
+    "crimson-desert":       "Crimson Desert",
+    "judas":                "Judas",
+    "ninja-gaiden-4":       "Ninja Gaiden 4",
+    "virtua-fighter-6":     "Virtua Fighter 6",
+    "lies-of-p-overture":   "Lies of P Overture",
+    "predator-badlands":    "Predator Badlands",
+    "ea-sports-fc-26":      "EA Sports FC 26",
+    "wwe-2k27":             "WWE 2K27",
+    "hollow-knight-silksong": "Hollow Knight Silksong",
+    "final-fantasy-7-remake-part3": "Final Fantasy VII Remake Part 3",
 }
 
 RSS_FEEDS = [
@@ -47,30 +49,30 @@ RSS_FEEDS = [
 ]
 
 WATCH_KEYWORDS = {
-    "halloween":        ["halloween the game", "illfonic halloween", "michael myers game", "halloween illfonic"],
-    "gta6":             ["gta 6", "gta vi", "grand theft auto vi", "grand theft auto 6", "rockstar games gta"],
-    "silent-hill-f":    ["silent hill f", "neobards", "silent hill 2026"],
+    "halloween":        ["halloween the game", "illfonic halloween", "michael myers game"],
+    "gta6":             ["gta 6", "gta vi", "grand theft auto vi", "grand theft auto 6"],
+    "silent-hill-f":    ["silent hill f", "neobards"],
     "call-of-duty-bo7": ["black ops 7", "call of duty 2026", "treyarch 2026"],
-    "wolverine":        ["insomniac wolverine", "marvel wolverine ps5", "wolverine ps5"],
+    "wolverine":        ["insomniac wolverine", "marvel wolverine ps5"],
     "resident-evil-9":  ["resident evil 9", "re9", "biohazard 9"],
     "crimson-desert":   ["crimson desert", "pearl abyss"],
-    "judas":            ["judas game", "ghost story games", "ken levine game"],
+    "judas":            ["judas game", "ghost story games", "ken levine"],
     "blood-of-dawnwalker": ["blood of dawnwalker", "rebel wolves"],
     "ninja-gaiden-4":   ["ninja gaiden 4", "ninja gaiden ragebound"],
     "virtua-fighter-6": ["virtua fighter 6", "vf6 sega"],
     "hollow-knight-silksong": ["silksong", "hollow knight 2"],
     "ghost-of-yotei":   ["ghost of yotei", "sucker punch 2026"],
-    "predator-badlands": ["predator badlands", "predator game illfonic"],
+    "predator-badlands": ["predator badlands"],
     "ea-sports-fc-26":  ["ea sports fc 26", "fc 26", "ea fc 26"],
-    "wwe-2k27":         ["wwe 2k27", "wwe 2027"],
-    "lies-of-p-overture": ["lies of p overture", "lies of p prequel"],
-    "final-fantasy-7-remake-part3": ["final fantasy vii remake part 3", "ff7 remake 3", "final fantasy 7 part 3"],
+    "wwe-2k27":         ["wwe 2k27"],
+    "lies-of-p-overture": ["lies of p overture"],
+    "final-fantasy-7-remake-part3": ["final fantasy vii remake part 3", "ff7 remake 3"],
 }
 
-DELAY_PATTERNS    = [r"delay", r"pushed back", r"postponed", r"moved to", r"new release date", r"shifted", r"no longer releasing"]
-PREORDER_PATTERNS = [r"pre.?order", r"pre.?orders now live", r"available to pre.?order", r"pre.?order now", r"pre.?orders open"]
+DELAY_PATTERNS    = [r"delay", r"pushed back", r"postponed", r"moved to", r"new release date", r"shifted"]
+PREORDER_PATTERNS = [r"pre.?order", r"pre.?orders now live", r"available to pre.?order", r"pre.?order now"]
 BETA_PATTERNS     = [r"beta", r"open beta", r"closed beta", r"beta date", r"beta announced"]
-RELEASED_PATTERNS = [r"out now", r"available now", r"now available", r"launches today", r"released today", r"on sale now"]
+RELEASED_PATTERNS = [r"out now", r"available now", r"now available", r"launches today", r"released today"]
 
 
 def log(msg):
@@ -78,12 +80,12 @@ def log(msg):
     print(f"[{ts}] {msg}")
 
 
-def fetch_url(url, timeout=15):
+def fetch_url(url, timeout=15, headers=None):
     try:
-        req = urllib.request.Request(url, headers={
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-            "Accept": "text/html,application/xhtml+xml,*/*;q=0.8"
-        })
+        h = {"User-Agent": "BindsPS5Tracker/4.0 (github.com/oBinds/ps5-tracker)"}
+        if headers:
+            h.update(headers)
+        req = urllib.request.Request(url, headers=h)
         with urllib.request.urlopen(req, timeout=timeout) as r:
             return r.read().decode("utf-8", errors="replace")
     except Exception as e:
@@ -91,89 +93,102 @@ def fetch_url(url, timeout=15):
         return None
 
 
-async def check_ps_store_playwright(game_id, game, page):
-    """Use real browser to check PS Store for pre-order/release status."""
-    search_term = PS_STORE_SEARCHES.get(game_id)
-    if not search_term:
+def itad_search(title):
+    """Search ITAD for a game and return its plain ID."""
+    if not ITAD_API_KEY:
+        return None
+    url = f"{ITAD_BASE}/games/search/v1?key={ITAD_API_KEY}&title={urllib.parse.quote(title)}&results=5"
+    data = fetch_url(url)
+    if not data:
+        return None
+    try:
+        results = json.loads(data)
+        for r in results:
+            if r.get("title", "").lower() == title.lower():
+                return r.get("id")
+        if results:
+            return results[0].get("id")
+    except Exception as e:
+        log(f"  ⚠ ITAD search parse error: {e}")
+    return None
+
+
+def itad_get_prices(game_plain):
+    """Get current prices for a game from ITAD — checks PS Store (psn) shop."""
+    if not ITAD_API_KEY or not game_plain:
+        return None
+    url = f"{ITAD_BASE}/games/prices/v3?key={ITAD_API_KEY}&country=US&shops=psn"
+    try:
+        body = json.dumps([game_plain]).encode("utf-8")
+        req = urllib.request.Request(
+            url,
+            data=body,
+            headers={
+                "User-Agent": "BindsPS5Tracker/4.0",
+                "Content-Type": "application/json"
+            },
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=15) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except Exception as e:
+        log(f"  ⚠ ITAD prices error: {e}")
+        return None
+
+
+def check_itad(game_id, game):
+    """Check ITAD for pre-order/price/release info."""
+    title = ITAD_TITLES.get(game_id)
+    if not title:
         return False
 
-    url = f"https://store.playstation.com/en-us/search/{search_term.replace(' ', '%20')}"
+    log(f"  Searching ITAD: {title}")
+    plain = itad_search(title)
+    if not plain:
+        log(f"  ✗ Not found on ITAD: {title}")
+        return False
+
+    log(f"  ✓ Found on ITAD: {plain}")
+    prices_data = itad_get_prices(plain)
+    if not prices_data:
+        return False
+
     changed = False
-
     try:
-        await page.goto(url, wait_until="networkidle", timeout=30000)
-        await page.wait_for_timeout(3000)
+        for entry in prices_data:
+            if entry.get("id") != plain:
+                continue
+            deals = entry.get("deals", [])
+            if not deals:
+                continue
 
-        content = await page.content()
-        content_lower = content.lower()
+            for deal in deals:
+                shop = deal.get("shop", {}).get("id", "")
+                price_info = deal.get("price", {})
+                price_amount = price_info.get("amount", 0)
+                price_str = f"${price_amount:.2f}" if price_amount else "TBA"
+                cut = deal.get("cut", 0)
 
-        # Check if game title appears on page
-        title_words = [w for w in game["title"].lower().split() if len(w) > 3]
-        title_found = sum(1 for w in title_words if w in content_lower) >= min(2, len(title_words))
+                log(f"  💰 {shop}: {price_str} ({cut}% off)")
 
-        if not title_found:
-            log(f"  ✗ '{game['title']}' not found on PS Store search")
-            return False
+                # If it's on PSN with a price, pre-order is available
+                if shop == "psn" and price_amount > 0:
+                    if not game["preOrderAvailable"] or game.get("preOrderPrice") in (None, "TBA", ""):
+                        log(f"  🛒 PRE-ORDER/PRICE found on PSN: {price_str}")
+                        game["preOrderAvailable"] = True
+                        game["preOrderDate"] = "Now available"
+                        game["preOrderPrice"] = price_str
+                        if not game.get("preOrderLinks"):
+                            game["preOrderLinks"] = "PlayStation Store"
+                        changed = True
 
-        log(f"  ✓ Found '{game['title']}' on PS Store")
-
-        # Check for pre-order
-        preorder_signals = ["pre-order", "preorder", "pre order"]
-        if not game["preOrderAvailable"]:
-            if any(s in content_lower for s in preorder_signals):
-                log(f"  🛒 PRE-ORDER LIVE on PS Store: {game['title']}!")
-                game["preOrderAvailable"] = True
-                game["preOrderDate"] = "Now available"
-                if not game.get("preOrderLinks"):
-                    game["preOrderLinks"] = "PlayStation Store"
-
-                # Try to get price
-                price_match = re.search(r'\$[\d]+\.[\d]{2}', content)
-                if price_match and (not game.get("preOrderPrice") or game.get("preOrderPrice") == "TBA"):
-                    game["preOrderPrice"] = price_match.group(0)
-                    log(f"  💰 Price found: {game['preOrderPrice']}")
-
-                changed = True
-
-        # Check for release
-        buy_signals = ["buy now", "add to cart"]
-        if game["releaseStatus"] != "released":
-            if any(s in content_lower for s in buy_signals):
-                if not any(s in content_lower for s in preorder_signals):
-                    log(f"  ✅ RELEASED on PS Store: {game['title']}!")
-                    game["releaseStatus"] = "released"
-                    changed = True
-
+                    # If there's a cut, it might be released
+                    if cut == 0 and game["releaseStatus"] not in ("released",):
+                        pass  # Still pre-order price, not released
     except Exception as e:
-        log(f"  ⚠ Playwright error for {game['title']}: {e}")
+        log(f"  ⚠ ITAD price parse error: {e}")
 
     return changed
-
-
-async def run_playwright_checks(game_index, changes):
-    try:
-        from playwright.async_api import async_playwright
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
-            context = await browser.new_context(
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
-                viewport={"width": 1280, "height": 800}
-            )
-            page = await context.new_page()
-
-            log("\n--- Checking PlayStation Store (real browser) ---")
-            for game_id, game in game_index.items():
-                if game.get("releaseStatus") == "released" and game.get("preOrderAvailable"):
-                    continue
-                log(f"Checking: {game['title']}")
-                if await check_ps_store_playwright(game_id, game, page):
-                    changes.append(f"PS_STORE: {game['title']}")
-
-            await browser.close()
-    except ImportError:
-        log("⚠ Playwright not available, skipping PS Store checks")
-    except Exception as e:
-        log(f"⚠ Playwright failed: {e}")
 
 
 def fetch_rss_items(feed_url):
@@ -190,7 +205,7 @@ def fetch_rss_items(feed_url):
             items.append((title.lower(), desc.lower(), link))
         return items
     except Exception as e:
-        log(f"  ⚠ RSS parse error {feed_url}: {e}")
+        log(f"  ⚠ RSS parse error: {e}")
         return []
 
 
@@ -216,7 +231,7 @@ def load_games():
 
 def save_games(data):
     data["lastUpdated"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    data["updatedBy"] = "Binds PS5 Tracker Auto-Updater v3"
+    data["updatedBy"] = "Binds PS5 Tracker Auto-Updater v4"
     with open(GAMES_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     log("✅ games.json saved.")
@@ -227,14 +242,24 @@ def build_game_index(data):
 
 
 def main():
-    log("=== Binds PS5 Tracker Auto-Updater v3 ===")
+    log("=== Binds PS5 Tracker Auto-Updater v4 (ITAD) ===")
+
+    if not ITAD_API_KEY:
+        log("⚠ ITAD_API_KEY not set!")
+    else:
+        log(f"✓ ITAD API key loaded")
 
     data = load_games()
     game_index = build_game_index(data)
     changes = []
 
-    # ── 1. PlayStation Store checks via real browser ──────────────────────────
-    asyncio.run(run_playwright_checks(game_index, changes))
+    # ── 1. IsThereAnyDeal API checks ──────────────────────────────────────────
+    log("\n--- Checking IsThereAnyDeal API ---")
+    for game_id, game in game_index.items():
+        if game.get("releaseStatus") == "released" and game.get("preOrderAvailable"):
+            continue
+        if check_itad(game_id, game):
+            changes.append(f"ITAD: {game['title']}")
 
     # ── 2. RSS feed checks ────────────────────────────────────────────────────
     log("\n--- Checking RSS feeds ---")
@@ -249,37 +274,31 @@ def main():
         game = game_index.get(game_id)
         if not game:
             continue
-
         matched = [i for i in all_items if item_matches(i[0], i[1], keywords)]
         if not matched:
             continue
-
         log(f"\n📌 {len(matched)} news items: {game['title']}")
         for title, desc, link in matched[:5]:
             events = detect_event(title, desc)
             if not events:
                 continue
             log(f"  Events: {events} | {title[:80]}")
-
             if "delay" in events and game["releaseStatus"] not in ("released", "cancelled", "delayed"):
                 game["releaseStatus"] = "delayed"
                 if not game.get("delayInfo"):
                     game["delayInfo"] = f"Delay reported {datetime.now(timezone.utc).strftime('%b %Y')}. Source: {link}"
                 changes.append(f"DELAY: {game['title']}")
-
             if "preorder" in events and not game["preOrderAvailable"]:
                 game["preOrderAvailable"] = True
                 game["preOrderDate"] = "Now available"
                 if not game.get("preOrderLinks"):
                     game["preOrderLinks"] = "PlayStation Store"
                 changes.append(f"PREORDER: {game['title']}")
-
             if "beta" in events and not game["hasBeta"]:
                 game["hasBeta"] = True
                 if not game.get("betaDate"):
                     game["betaDate"] = f"Beta announced {datetime.now(timezone.utc).strftime('%b %Y')}"
                 changes.append(f"BETA: {game['title']}")
-
             if "released" in events and game["releaseStatus"] != "released":
                 game["releaseStatus"] = "released"
                 changes.append(f"RELEASED: {game['title']}")
@@ -289,7 +308,8 @@ def main():
 
     if changes:
         log(f"\n🔥 {len(changes)} change(s):")
-        for c in changes: log(f"  • {c}")
+        for c in changes:
+            log(f"  • {c}")
     else:
         log("\n✅ No changes detected.")
 
@@ -299,7 +319,8 @@ def main():
             f.write(f"## PS5 Tracker — {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}\n\n")
             if changes:
                 f.write(f"### 🔥 {len(changes)} update(s)\n")
-                for c in changes: f.write(f"- {c}\n")
+                for c in changes:
+                    f.write(f"- {c}\n")
             else:
                 f.write("✅ No changes.\n")
             f.write(f"\nGames tracked: {len(data['games'])}\n")

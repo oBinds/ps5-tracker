@@ -45,6 +45,12 @@ jobs:
           mkdir -p deploy
           cp ps5-tracker/public/games.json deploy/games.json
           cp ps5-tracker/public/index.html deploy/index.html
+          cp ps5-tracker/public/admin.html deploy/admin.html 2>/dev/null || true
+          cp admin.html deploy/admin.html 2>/dev/null || true
+          cp manifest.json deploy/manifest.json 2>/dev/null || true
+          cp sw.js deploy/sw.js 2>/dev/null || true
+          cp icon-192.png deploy/icon-192.png 2>/dev/null || true
+          cp icon-512.png deploy/icon-512.png 2>/dev/null || true
           echo "Files ready:"
           ls -la deploy/
 

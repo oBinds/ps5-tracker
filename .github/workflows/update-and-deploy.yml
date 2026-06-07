@@ -23,12 +23,13 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: |
-          pip install requests beautifulsoup4 playwright
-          playwright install chromium
-          playwright install-deps chromium
+        run: pip install requests
 
       - name: Run game updater script
+        env:
+          ITAD_API_KEY: ${{ secrets.ITAD_API_KEY }}
+          ITAD_CLIENT_ID: ${{ secrets.ITAD_CLIENT_ID }}
+          ITAD_CLIENT_SECRET: ${{ secrets.ITAD_CLIENT_SECRET }}
         run: python ps5-tracker/scripts/update_games.py
 
       - name: Commit updated games.json if changed

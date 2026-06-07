@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PS5 Tracker — Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#07071a;--surface:#0b0b22;--border:#1a1a3a;--accent:#3d5afe;
+  --accent2:#00e5ff;--green:#00e676;--red:#ef5350;--yellow:#ffd740;
+  --text:#e8eaf6;--sub:#7986cb;--dim:#3d4270;
+}
+body{background:var(--bg);color:var(--text);font-family:'Courier New',monospace;min-height:100vh;}
+
+/* Login */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;width:min(380px,100%);text-align:center;}
+.login-box h1{font-size:18px;color:var(--accent2);margin-bottom:4px;}
+.login-box p{font-size:11px;color:var(--sub);margin-bottom:1.5rem;}
+.login-box input{width:100%;background:#060616;border:1px solid var(--border);border-radius:6px;padding:10px 12px;color:var(--text);font-family:inherit;font-size:13px;margin-bottom:8px;outline:none;}
+.login-box input:focus{border-color:var(--accent);}
+.login-box button{width:100%;background:var(--accent);border:none;border-radius:6px;padding:11px;color:#fff;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-top:4px;}
+.login-box button:hover{background:#5c6bc0;}
+#loginErr{color:var(--red);font-size:11px;margin-top:8px;min-height:16px;}
+
+/* Main */
+#adminScreen{display:none;max-width:1000px;margin:0 auto;padding:20px;}
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.top-bar h1{font-size:14px;color:var(--accent2);letter-spacing:1px;}
+.top-bar .user{font-size:11px;color:var(--sub);}
+.top-bar button{background:none;border:1px solid var(--red);border-radius:5px;padding:5px 12px;color:var(--red);font-family:inherit;font-size:11px;cursor:pointer;}
+
+/* Game selector */
+.section-title{font-size:10px;color:var(--sub);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+#gameSelect{width:100%;background:#060616;border:1px solid var(--border);border-radius:6px;padding:10px 12px;color:var(--text);font-family:inherit;font-size:13px;margin-bottom:20px;outline:none;cursor:pointer;}
+#gameSelect:focus{border-color:var(--accent);}
+
+/* Edit form */
+#editForm{display:none;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field.full{grid-column:1/-1;}
+.field label{font-size:10px;color:var(--sub);letter-spacing:.5px;text-transform:uppercase;}
+.field input,.field select,.field textarea{background:#060616;border:1px solid var(--border);border-radius:6px;padding:9px 12px;color:var(--text);font-family:inherit;font-size:12px;outline:none;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
+.field textarea{resize:vertical;min-height:80px;}
+.field select option{background:#0b0b22;}
+
+/* Status badges */
+.status-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.status-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--dim);background:none;color:var(--sub);font-family:inherit;font-size:11px;cursor:pointer;transition:all .15s;}
+.status-btn.active-on-track{border-color:var(--green);color:var(--green);background:rgba(0,230,118,.08);}
+.status-btn.active-delayed{border-color:var(--red);color:var(--red);background:rgba(239,83,80,.08);}
+.status-btn.active-tba{border-color:var(--yellow);color:var(--yellow);background:rgba(255,215,64,.08);}
+.status-btn.active-released{border-color:#64b5f6;color:#64b5f6;background:rgba(100,181,246,.08);}
+
+/* Toggle row */
+.toggle-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
+.toggle-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub);cursor:pointer;}
+.toggle-item input{width:16px;height:16px;cursor:pointer;accent-color:var(--accent);}
+
+/* Save button */
+.save-row{display:flex;gap:10px;align-items:center;}
+.save-btn{background:var(--green);border:none;border-radius:6px;padding:10px 24px;color:#000;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;}
+.save-btn:hover{background:#69f0ae;}
+.save-btn:disabled{background:var(--dim);color:var(--sub);cursor:not-allowed;}
+#saveStatus{font-size:12px;color:var(--sub);}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--text);z-index:999;opacity:0;transform:translateY(10px);transition:all .2s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.ok{border-color:var(--green);color:var(--green);}
+.toast.err{border-color:var(--red);color:var(--red);}
+
+/* Not admin */
+#notAdmin{display:none;text-align:center;padding:3rem;color:var(--red);font-size:13px;}
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>🎮 PS5 TRACKER</h1>
+    <p>Admin Panel — Binds only</p>
+    <input type="text" id="loginUser" placeholder="Username"/>
+    <input type="password" id="loginPass" placeholder="Password"/>
+    <button onclick="doLogin()">Sign In</button>
+    <div id="loginErr"></div>
+  </div>
+</div>
+
+<!-- Not admin -->
+<div id="notAdmin">
+  <p>⛔ Access denied — admin only.</p>
+  <button onclick="doLogout()" style="margin-top:12px;background:none;border:1px solid var(--red);border-radius:5px;padding:6px 16px;color:var(--red);font-family:inherit;cursor:pointer;">Sign Out</button>
+</div>
+
+<!-- Admin screen -->
+<div id="adminScreen">
+  <div class="top-bar">
+    <h1>⚙️ GAME DATA EDITOR</h1>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="user" id="adminUser"></span>
+      <button onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="section-title">Select a game to edit</div>
+  <select id="gameSelect" onchange="loadGame()">
+    <option value="">-- Choose a game --</option>
+  </select>
+
+  <div id="editForm">
+    <div class="section-title">Release Info</div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Release Date</label>
+        <input type="text" id="f_releaseDate" placeholder="e.g. Sep 8, 2026"/>
+      </div>
+      <div class="field">
+        <label>Release Status</label>
+        <div class="status-row" style="margin-bottom:0;margin-top:4px;">
+          <button class="status-btn" onclick="setStatus('on-track')">On Track</button>
+          <button class="status-btn" onclick="setStatus('delayed')">Delayed</button>
+          <button class="status-btn" onclick="setStatus('tba')">TBA</button>
+          <button class="status-btn" onclick="setStatus('released')">Released</button>
+        </div>
+        <input type="hidden" id="f_releaseStatus"/>
+      </div>
+      <div class="field full">
+        <label>Delay Info (if delayed)</label>
+        <input type="text" id="f_delayInfo" placeholder="e.g. Delayed from May 2026 to Nov 2026"/>
+      </div>
+    </div>
+
+    <div class="section-title">Pre-Order Info</div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Pre-Order Available</label>
+        <select id="f_preOrderAvailable">
+          <option value="false">No</option>
+          <option value="true">Yes — Live Now</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Pre-Order Date</label>
+        <input type="text" id="f_preOrderDate" placeholder="e.g. Now available"/>
+      </div>
+      <div class="field">
+        <label>Pre-Order Price</label>
+        <input type="text" id="f_preOrderPrice" placeholder="e.g. $39.99 / $59.99 Deluxe"/>
+      </div>
+      <div class="field">
+        <label>Pre-Order Links</label>
+        <input type="text" id="f_preOrderLinks" placeholder="e.g. PlayStation Store, Amazon"/>
+      </div>
+      <div class="field full">
+        <label>Pre-Order Bonus</label>
+        <input type="text" id="f_preOrderBonus" placeholder="e.g. Digital Deluxe Edition at $59.99"/>
+      </div>
+    </div>
+
+    <div class="section-title">Beta Info</div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Has Beta</label>
+        <select id="f_hasBeta">
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Beta Date</label>
+        <input type="text" id="f_betaDate" placeholder="e.g. August 2026"/>
+      </div>
+    </div>
+
+    <div class="section-title">Metacritic</div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Metacritic Score (leave blank if N/A)</label>
+        <input type="number" id="f_metacriticScore" placeholder="e.g. 88" min="0" max="100"/>
+      </div>
+    </div>
+
+    <div class="save-row">
+      <button class="save-btn" id="saveBtn" onclick="saveGame()">💾 Save & Deploy</button>
+      <span id="saveStatus"></span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://uflkusbgmxkcaosbqxav.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmbGt1c2JnbXhrY2Fvc2JxeGF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzNjAzNzYsImV4cCI6MjA5NTkzNjM3Nn0.sxQecTkOz_9q0NbTkZRsqX46H2jkJxyPFaYSxUxUBJQ';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const GH_OWNER = 'oBinds';
+const GH_REPO  = 'ps5-tracker';
+const GH_PATH  = 'ps5-tracker/public/games.json';
+const GH_TOKEN_KEY = 'admin_gh_pat';
+
+let games = [];
+let currentGame = null;
+let ghToken = '';
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+async function doLogin(){
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value.trim();
+  const err = document.getElementById('loginErr');
+  err.textContent = '';
+  if(!u||!p){err.textContent='Enter username and password.';return;}
+
+  // Get email from profiles
+  const {data:profile} = await sb.from('profiles').select('email,username').eq('username',u).maybeSingle();
+  if(!profile||!profile.email){err.textContent='User not found.';return;}
+
+  const {data,error} = await sb.auth.signInWithPassword({email:profile.email, password:p});
+  if(error){err.textContent=error.message;return;}
+
+  // Check if admin (username == 'Binds')
+  if(profile.username.toLowerCase() !== 'binds'){
+    await sb.auth.signOut();
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('notAdmin').style.display='block';
+    return;
+  }
+
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('adminScreen').style.display='block';
+  document.getElementById('adminUser').textContent = '👤 '+profile.username;
+
+  // Prompt for GitHub PAT (stored in sessionStorage only)
+  ghToken = sessionStorage.getItem(GH_TOKEN_KEY) || '';
+  if(!ghToken){
+    ghToken = prompt('Enter your GitHub Personal Access Token (GH_PAT):\n(Only needed once per session)') || '';
+    if(ghToken) sessionStorage.setItem(GH_TOKEN_KEY, ghToken);
+  }
+
+  await loadGames();
+}
+
+async function doLogout(){
+  await sb.auth.signOut();
+  sessionStorage.removeItem(GH_TOKEN_KEY);
+  location.reload();
+}
+
+// ── Load games from GitHub ────────────────────────────────────────────────────
+async function loadGames(){
+  try{
+    const r = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`,{
+      headers:{'Authorization':`token ${ghToken}`,'Accept':'application/vnd.github.v3+json'}
+    });
+    const meta = await r.json();
+    const content = atob(meta.content.replace(/\n/g,''));
+    const data = JSON.parse(content);
+    games = data.games || [];
+
+    const sel = document.getElementById('gameSelect');
+    sel.innerHTML = '<option value="">-- Choose a game --</option>';
+    games.forEach((g,i)=>{
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = g.title + (g.preOrderAvailable ? ' ✅ Pre-order LIVE' : '') + (g.releaseStatus==='released'?' 🎮 Released':'');
+      sel.appendChild(opt);
+    });
+    toast('✅ Loaded '+games.length+' games','ok');
+  }catch(e){
+    toast('❌ Failed to load games: '+e.message,'err');
+  }
+}
+
+// ── Load selected game into form ──────────────────────────────────────────────
+function loadGame(){
+  const idx = document.getElementById('gameSelect').value;
+  if(idx===''){document.getElementById('editForm').style.display='none';return;}
+  currentGame = {...games[parseInt(idx)], _idx: parseInt(idx)};
+  document.getElementById('editForm').style.display='block';
+
+  document.getElementById('f_releaseDate').value   = currentGame.releaseDate || '';
+  document.getElementById('f_releaseStatus').value = currentGame.releaseStatus || 'tba';
+  document.getElementById('f_delayInfo').value     = currentGame.delayInfo || '';
+  document.getElementById('f_preOrderAvailable').value = String(currentGame.preOrderAvailable||false);
+  document.getElementById('f_preOrderDate').value  = currentGame.preOrderDate || '';
+  document.getElementById('f_preOrderPrice').value = currentGame.preOrderPrice || '';
+  document.getElementById('f_preOrderLinks').value = currentGame.preOrderLinks || '';
+  document.getElementById('f_preOrderBonus').value = currentGame.preOrderBonus || '';
+  document.getElementById('f_hasBeta').value       = String(currentGame.hasBeta||false);
+  document.getElementById('f_betaDate').value      = currentGame.betaDate || '';
+  document.getElementById('f_metacriticScore').value = currentGame.metacriticScore || '';
+
+  setStatus(currentGame.releaseStatus||'tba');
+  document.getElementById('saveStatus').textContent = '';
+}
+
+function setStatus(s){
+  document.getElementById('f_releaseStatus').value = s;
+  document.querySelectorAll('.status-btn').forEach(b=>{
+    b.className = 'status-btn';
+    if(b.textContent.toLowerCase().replace(' ','-')===s||
+       (s==='on-track'&&b.textContent==='On Track')||
+       (s==='tba'&&b.textContent==='TBA')||
+       (s==='released'&&b.textContent==='Released')||
+       (s==='delayed'&&b.textContent==='Delayed')){
+      b.classList.add('active-'+s);
+    }
+  });
+}
+
+// ── Save to GitHub ────────────────────────────────────────────────────────────
+async function saveGame(){
+  if(!currentGame){return;}
+  const btn = document.getElementById('saveBtn');
+  const status = document.getElementById('saveStatus');
+  btn.disabled = true;
+  status.textContent = 'Saving...';
+  status.style.color = 'var(--sub)';
+
+  try{
+    // Update game object
+    const idx = currentGame._idx;
+    games[idx].releaseDate      = document.getElementById('f_releaseDate').value.trim();
+    games[idx].releaseStatus    = document.getElementById('f_releaseStatus').value;
+    games[idx].delayInfo        = document.getElementById('f_delayInfo').value.trim() || null;
+    games[idx].preOrderAvailable = document.getElementById('f_preOrderAvailable').value === 'true';
+    games[idx].preOrderDate     = document.getElementById('f_preOrderDate').value.trim() || null;
+    games[idx].preOrderPrice    = document.getElementById('f_preOrderPrice').value.trim() || null;
+    games[idx].preOrderLinks    = document.getElementById('f_preOrderLinks').value.trim() || null;
+    games[idx].preOrderBonus    = document.getElementById('f_preOrderBonus').value.trim() || null;
+    games[idx].hasBeta          = document.getElementById('f_hasBeta').value === 'true';
+    games[idx].betaDate         = document.getElementById('f_betaDate').value.trim() || null;
+    const mc = document.getElementById('f_metacriticScore').value;
+    games[idx].metacriticScore  = mc ? parseInt(mc) : null;
+
+    // Get current file SHA
+    const metaR = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`,{
+      headers:{'Authorization':`token ${ghToken}`,'Accept':'application/vnd.github.v3+json'}
+    });
+    const meta = await metaR.json();
+    const sha = meta.sha;
+
+    // Build updated JSON
+    const updated = {
+      lastUpdated: new Date().toISOString(),
+      updatedBy: 'Binds Admin Panel',
+      games: games
+    };
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(updated, null, 2))));
+
+    // Commit to GitHub
+    const commitR = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`,{
+      method:'PUT',
+      headers:{
+        'Authorization':`token ${ghToken}`,
+        'Accept':'application/vnd.github.v3+json',
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify({
+        message: `Update ${games[idx].title} — admin panel`,
+        content: content,
+        sha: sha
+      })
+    });
+
+    if(!commitR.ok){
+      const err = await commitR.json();
+      throw new Error(err.message||'GitHub commit failed');
+    }
+
+    status.textContent = '✅ Saved! Deploying to Cloudflare...';
+    status.style.color = 'var(--green)';
+    toast('✅ '+games[idx].title+' updated — deploying!','ok');
+
+    // Refresh dropdown
+    await loadGames();
+    document.getElementById('gameSelect').value = idx;
+
+  }catch(e){
+    status.textContent = '❌ '+e.message;
+    status.style.color = 'var(--red)';
+    toast('❌ Save failed: '+e.message,'err');
+  }
+
+  btn.disabled = false;
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, type='ok'){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show '+(type||'');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3500);
+}
+
+// Enter key on login
+document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('loginUser').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+</script>
+</body>
+</html>

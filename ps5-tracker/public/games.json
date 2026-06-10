@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-06-10T13:50:08Z",
+  "lastUpdated": "2026-06-10T16:49:51Z",
   "updatedBy": "Binds PS5 Tracker Auto-Updater v4",
   "games": [
     {
@@ -288,8 +288,8 @@
       "title": "Crimson Desert",
       "genre": "action",
       "releaseDate": "2026",
-      "releaseStatus": "on-track",
-      "delayInfo": null,
+      "releaseStatus": "delayed",
+      "delayInfo": "Delay reported Jun 2026. Source: https://www.gamespot.com/articles/gundam-rogue-orbit-producers-say-no-genai-was-used-in-its-development/",
       "preOrderAvailable": false,
       "preOrderDate": "TBA",
       "preOrderPrice": "$69.99",

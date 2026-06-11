@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-06-11T14:39:23Z",
+  "lastUpdated": "2026-06-11T17:55:04Z",
   "updatedBy": "Binds PS5 Tracker Auto-Updater v4",
   "games": [
     {
@@ -38,7 +38,7 @@
       "title": "Grand Theft Auto VI",
       "genre": "action",
       "releaseDate": "Nov 19, 2026",
-      "releaseStatus": "delayed",
+      "releaseStatus": "released",
       "delayInfo": "Delayed twice — originally Fall 2025, then May 26 2026, now confirmed November 19 2026. Pre-orders NOT open yet as of June 2026.",
       "preOrderAvailable": false,
       "preOrderDate": "Summer 2026 (expected, not confirmed)",
@@ -257,8 +257,8 @@
       "title": "Blood of Dawnwalker",
       "genre": "rpg",
       "releaseDate": "Sep 3, 2026",
-      "releaseStatus": "on-track",
-      "delayInfo": null,
+      "releaseStatus": "released",
+      "delayInfo": "Delay reported Jun 2026. Source: https://www.gamespot.com/articles/september-is-so-busy-for-games-that-one-of-them-just-got-delayed-to-avoid-the-others-and-gta-6/",
       "preOrderAvailable": true,
       "preOrderDate": "Now available",
       "preOrderPrice": "$69.99",

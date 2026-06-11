@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-06-11T17:55:04Z",
+  "lastUpdated": "2026-06-11T20:03:41Z",
   "updatedBy": "Binds PS5 Tracker Auto-Updater v4",
   "games": [
     {
@@ -40,8 +40,8 @@
       "releaseDate": "Nov 19, 2026",
       "releaseStatus": "released",
       "delayInfo": "Delayed twice — originally Fall 2025, then May 26 2026, now confirmed November 19 2026. Pre-orders NOT open yet as of June 2026.",
-      "preOrderAvailable": false,
-      "preOrderDate": "Summer 2026 (expected, not confirmed)",
+      "preOrderAvailable": true,
+      "preOrderDate": "Now available",
       "preOrderPrice": "$70-$80 (unconfirmed)",
       "preOrderBonus": null,
       "preOrderLinks": "NOT OPEN YET — only buy from official PlayStation Store when announced",

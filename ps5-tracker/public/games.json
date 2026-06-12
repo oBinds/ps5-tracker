@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-06-12T16:36:53Z",
+  "lastUpdated": "2026-06-12T18:26:46Z",
   "updatedBy": "Binds PS5 Tracker Auto-Updater v4",
   "games": [
     {
@@ -196,8 +196,8 @@
       "releaseDate": "Late 2026",
       "releaseStatus": "on-track",
       "delayInfo": null,
-      "preOrderAvailable": false,
-      "preOrderDate": "TBA",
+      "preOrderAvailable": true,
+      "preOrderDate": "Now available",
       "preOrderPrice": "$69.99",
       "preOrderBonus": null,
       "preOrderLinks": "PlayStation Store, Amazon",

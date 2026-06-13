@@ -1,7 +1,75 @@
 {
-  "lastUpdated": "2026-06-03T00:00:00Z",
+  "lastUpdated": "2026-06-12T00:00:00Z",
   "updatedBy": "Binds PS5 Tracker",
   "games": [
+    {
+      "id": "black-ops-1-remaster",
+      "title": "Call of Duty: Black Ops",
+      "genre": "shooter",
+      "releaseDate": "TBA (rumored 2026)",
+      "releaseStatus": "tba",
+      "delayInfo": "UNCONFIRMED LEAK: Backend listings spotted on PlayStation servers June 2026 for PS4/PS5. Reported as a direct port (not a remaster) including Zombies and multiplayer. No official announcement from Activision yet.",
+      "preOrderAvailable": false,
+      "preOrderDate": null,
+      "preOrderPrice": null,
+      "preOrderBonus": null,
+      "preOrderLinks": null,
+      "platforms": "PS4, PS5 (rumored)",
+      "developer": "Treyarch",
+      "publisher": "Activision",
+      "description": "Original 2010 Black Ops set during the Cold War, Vietnam War and CIA conspiracy storyline. Leaked PS5 port listing (~22.7GB) reportedly includes Zombies and multiplayer, not just campaign. Unconfirmed by Activision.",
+      "metacriticScore": null,
+      "physicalEdition": false,
+      "digitalEdition": true,
+      "ps5Exclusive": false,
+      "hasBeta": false,
+      "betaDate": null,
+      "tags": [
+        "black ops",
+        "bo1",
+        "zombies",
+        "treyarch",
+        "cold war",
+        "rumor",
+        "leak",
+        "remaster",
+        "port"
+      ]
+    },
+    {
+      "id": "black-ops-2-remaster",
+      "title": "Call of Duty: Black Ops II",
+      "genre": "shooter",
+      "releaseDate": "TBA (rumored 2026)",
+      "releaseStatus": "tba",
+      "delayInfo": "UNCONFIRMED LEAK: Backend listings spotted on PlayStation servers June 2026 for PS4/PS5, alongside Black Ops 1. Reported as a direct port (not a remaster) including Zombies and multiplayer. No official announcement from Activision yet.",
+      "preOrderAvailable": false,
+      "preOrderDate": null,
+      "preOrderPrice": null,
+      "preOrderBonus": null,
+      "preOrderLinks": null,
+      "platforms": "PS4, PS5 (rumored)",
+      "developer": "Treyarch",
+      "publisher": "Activision",
+      "description": "Original 2012 Black Ops II spanning a 1980s Cold War story and a near-future 2025 campaign. Leaked PS5 port listing (~30.3GB) reportedly includes fan-favorite Zombies maps and multiplayer. Unconfirmed by Activision.",
+      "metacriticScore": null,
+      "physicalEdition": false,
+      "digitalEdition": true,
+      "ps5Exclusive": false,
+      "hasBeta": false,
+      "betaDate": null,
+      "tags": [
+        "black ops 2",
+        "bo2",
+        "zombies",
+        "treyarch",
+        "menendez",
+        "rumor",
+        "leak",
+        "remaster",
+        "port"
+      ]
+    },
     {
       "id": "halloween",
       "title": "Halloween",
@@ -24,7 +92,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["michael myers","slasher","asymmetric","multiplayer","halloween","horror"]
+      "tags": [
+        "michael myers",
+        "slasher",
+        "asymmetric",
+        "multiplayer",
+        "halloween",
+        "horror"
+      ]
     },
     {
       "id": "gta6",
@@ -32,12 +107,12 @@
       "genre": "action",
       "releaseDate": "Nov 19, 2026",
       "releaseStatus": "delayed",
-      "delayInfo": "Delayed twice — originally Fall 2025, then May 26 2026, now confirmed November 19 2026. Pre-orders NOT open yet as of June 2026.",
+      "delayInfo": "Delayed twice \u2014 originally Fall 2025, then May 26 2026, now confirmed November 19 2026. Pre-orders NOT open yet as of June 2026.",
       "preOrderAvailable": false,
       "preOrderDate": "Summer 2026 (expected, not confirmed)",
       "preOrderPrice": "$70-$80 (unconfirmed)",
       "preOrderBonus": null,
-      "preOrderLinks": "NOT OPEN YET — only buy from official PlayStation Store when announced",
+      "preOrderLinks": "NOT OPEN YET \u2014 only buy from official PlayStation Store when announced",
       "platforms": "PS5, Xbox Series X/S",
       "developer": "Rockstar Games",
       "publisher": "Rockstar Games / Take-Two Interactive",
@@ -48,7 +123,15 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["gta","rockstar","open world","vice city","lucia","gta6","grand theft auto"]
+      "tags": [
+        "gta",
+        "rockstar",
+        "open world",
+        "vice city",
+        "lucia",
+        "gta6",
+        "grand theft auto"
+      ]
     },
     {
       "id": "wolverine",
@@ -72,7 +155,14 @@
       "ps5Exclusive": true,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["marvel","wolverine","insomniac","exclusive","xmen","superhero"]
+      "tags": [
+        "marvel",
+        "wolverine",
+        "insomniac",
+        "exclusive",
+        "xmen",
+        "superhero"
+      ]
     },
     {
       "id": "silent-hill-f",
@@ -96,7 +186,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["silent hill","konami","psychological","fog","japan","horror"]
+      "tags": [
+        "silent hill",
+        "konami",
+        "psychological",
+        "fog",
+        "japan",
+        "horror"
+      ]
     },
     {
       "id": "resident-evil-9",
@@ -120,7 +217,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["capcom","resident evil","survival horror","zombies","biohazard","horror"]
+      "tags": [
+        "capcom",
+        "resident evil",
+        "survival horror",
+        "zombies",
+        "biohazard",
+        "horror"
+      ]
     },
     {
       "id": "ghost-of-yotei",
@@ -144,7 +248,14 @@
       "ps5Exclusive": true,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["samurai","open world","japan","sucker punch","ghost","exclusive"]
+      "tags": [
+        "samurai",
+        "open world",
+        "japan",
+        "sucker punch",
+        "ghost",
+        "exclusive"
+      ]
     },
     {
       "id": "call-of-duty-bo7",
@@ -167,8 +278,17 @@
       "digitalEdition": true,
       "ps5Exclusive": false,
       "hasBeta": true,
-      "betaDate": "Beta typically 1-2 months before launch — TBA",
-      "tags": ["cod","call of duty","treyarch","zombies","warzone","multiplayer","black ops","shooter"]
+      "betaDate": "Beta typically 1-2 months before launch \u2014 TBA",
+      "tags": [
+        "cod",
+        "call of duty",
+        "treyarch",
+        "zombies",
+        "warzone",
+        "multiplayer",
+        "black ops",
+        "shooter"
+      ]
     },
     {
       "id": "hollow-knight-silksong",
@@ -192,7 +312,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["metroidvania","2d","indie","hollow knight","silksong"]
+      "tags": [
+        "metroidvania",
+        "2d",
+        "indie",
+        "hollow knight",
+        "silksong"
+      ]
     },
     {
       "id": "blood-of-dawnwalker",
@@ -216,7 +342,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["vampire","dark fantasy","rebel wolves","cdpr","medieval","rpg"]
+      "tags": [
+        "vampire",
+        "dark fantasy",
+        "rebel wolves",
+        "cdpr",
+        "medieval",
+        "rpg"
+      ]
     },
     {
       "id": "crimson-desert",
@@ -240,7 +373,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["pearl abyss","open world","medieval","fantasy","action rpg"]
+      "tags": [
+        "pearl abyss",
+        "open world",
+        "medieval",
+        "fantasy",
+        "action rpg"
+      ]
     },
     {
       "id": "judas",
@@ -264,7 +403,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["ken levine","bioshock","2k","space station","fps","judas"]
+      "tags": [
+        "ken levine",
+        "bioshock",
+        "2k",
+        "space station",
+        "fps",
+        "judas"
+      ]
     },
     {
       "id": "ninja-gaiden-4",
@@ -288,7 +434,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["team ninja","hack and slash","ninja","koei tecmo","ninja gaiden"]
+      "tags": [
+        "team ninja",
+        "hack and slash",
+        "ninja",
+        "koei tecmo",
+        "ninja gaiden"
+      ]
     },
     {
       "id": "virtua-fighter-6",
@@ -312,7 +464,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["sega","virtua fighter","3d fighter","competitive","fighting"]
+      "tags": [
+        "sega",
+        "virtua fighter",
+        "3d fighter",
+        "competitive",
+        "fighting"
+      ]
     },
     {
       "id": "lies-of-p-overture",
@@ -336,7 +494,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["soulslike","pinocchio","neowiz","prequel","lies of p"]
+      "tags": [
+        "soulslike",
+        "pinocchio",
+        "neowiz",
+        "prequel",
+        "lies of p"
+      ]
     },
     {
       "id": "final-fantasy-7-remake-part3",
@@ -360,7 +524,14 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["square enix","final fantasy","cloud","sephiroth","jrpg","ff7"]
+      "tags": [
+        "square enix",
+        "final fantasy",
+        "cloud",
+        "sephiroth",
+        "jrpg",
+        "ff7"
+      ]
     },
     {
       "id": "predator-badlands",
@@ -384,7 +555,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["predator","illfonic","open world","single player","action"]
+      "tags": [
+        "predator",
+        "illfonic",
+        "open world",
+        "single player",
+        "action"
+      ]
     },
     {
       "id": "wwe-2k27",
@@ -408,7 +585,12 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["wrestling","wwe","2k","sports"]
+      "tags": [
+        "wrestling",
+        "wwe",
+        "2k",
+        "sports"
+      ]
     },
     {
       "id": "ea-sports-fc-26",
@@ -432,7 +614,13 @@
       "ps5Exclusive": false,
       "hasBeta": false,
       "betaDate": null,
-      "tags": ["ea sports","football","soccer","ultimate team","career mode"]
+      "tags": [
+        "ea sports",
+        "football",
+        "soccer",
+        "ultimate team",
+        "career mode"
+      ]
     }
   ]
 }

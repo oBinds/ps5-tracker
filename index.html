@@ -5,12 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Binds PS5 Tracker</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>"/>
-<link rel="manifest" href="/manifest.json"/>
-<link rel="apple-touch-icon" href="/icon-192.png"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="PS5 Tracker"/>
-<meta name="theme-color" content="#07071a"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -254,6 +248,7 @@ html,body{background:#07071a;min-height:100%;font-family:-apple-system,BlinkMacS
         <button class="notif-enable-btn" id="notifEnableBtn" onclick="requestNotifPermission()">🔔 Enable Notifications</button>
         <button class="bell-btn" onclick="toggleNotifs()">🔔 Alerts <span class="bell-badge" id="bellBadge">0</span></button>
         <button class="track-btn" onclick="openAccountSettings()" style="border-color:#5c6bc0;color:#90caf9;background:#0d1440;">⚙️ Account</button>
+        <button class="logout-btn" onclick="doLogout()">Sign Out</button>
         <div class="madeby">made by <b>Binds</b></div>
       </div>
     </div>
@@ -299,57 +294,32 @@ html,body{background:#07071a;min-height:100%;font-family:-apple-system,BlinkMacS
 </div>
 
 <!-- Account Settings Modal -->
-<style>
-.acc-section{background:#060616;border:1px solid #12123a;border-radius:8px;margin-bottom:8px;overflow:hidden;}
-.acc-section-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;cursor:pointer;user-select:none;transition:background .12s;}
-.acc-section-hdr:hover{background:#0a0a20;}
-.acc-section-title{font-size:11px;font-weight:600;color:var(--accent2);display:flex;align-items:center;gap:7px;}
-.acc-section-arrow{font-size:10px;color:var(--dim);transition:transform .2s;}
-.acc-section.open .acc-section-arrow{transform:rotate(180deg);}
-.acc-section-body{display:none;padding:0 14px 13px;}
-.acc-section.open .acc-section-body{display:block;}
-.acc-logout-btn{width:100%;background:#140404;border:1px solid #ef5350;border-radius:8px;padding:10px;color:#ef5350;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:4px;transition:all .15s;}
-.acc-logout-btn:hover{background:#200808;color:#ff6b6b;border-color:#ff6b6b;}
-</style>
 <div id="accountModal" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;display:none;align-items:center;justify-content:center;padding:16px;">
-  <div style="background:#0b0b1e;border:1px solid var(--accent);border-radius:14px;padding:1.5rem;width:min(400px,100%);position:relative;max-height:90vh;overflow-y:auto;">
+  <div style="background:#0b0b1e;border:1px solid var(--accent);border-radius:14px;padding:1.5rem;width:min(420px,100%);position:relative;max-height:90vh;overflow-y:auto;">
     <div style="font-size:14px;font-weight:600;color:#90caf9;margin-bottom:1.2rem;display:flex;align-items:center;justify-content:space-between;">
       <span>⚙️ Account Settings</span>
       <button onclick="closeAccountSettings()" style="background:none;border:none;color:var(--sub);font-size:18px;cursor:pointer;font-family:inherit;">✕</button>
     </div>
 
     <!-- Change Password -->
-    <div class="acc-section" id="accPassSection">
-      <div class="acc-section-hdr" onclick="toggleAccSection('accPassSection')">
-        <span class="acc-section-title">🔒 Change Password</span>
-        <span class="acc-section-arrow">▼</span>
-      </div>
-      <div class="acc-section-body">
-        <div class="auth-field"><label>New Password</label><input type="password" id="newPass" placeholder="6–16 characters" maxlength="16"/></div>
-        <div class="auth-field"><label>Confirm New Password</label><input type="password" id="newPass2" placeholder="Repeat new password" maxlength="16"/></div>
-        <button class="auth-submit" onclick="changePassword()" style="margin-top:4px;">Update Password</button>
-        <div style="font-size:11px;color:var(--red);margin-top:5px;min-height:16px;" id="passErr"></div>
-        <div style="font-size:11px;color:var(--green);margin-top:5px;min-height:16px;" id="passOk"></div>
-      </div>
+    <div style="background:#060616;border:1px solid #12123a;border-radius:8px;padding:12px;margin-bottom:10px;">
+      <div style="font-size:10px;color:var(--accent2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;font-weight:600;">🔒 Change Password</div>
+      <div class="auth-field"><label>New Password</label><input type="password" id="newPass" placeholder="6–16 characters" maxlength="16"/></div>
+      <div class="auth-field"><label>Confirm New Password</label><input type="password" id="newPass2" placeholder="Repeat new password" maxlength="16"/></div>
+      <button class="auth-submit" onclick="changePassword()" style="margin-top:4px;">Update Password</button>
+      <div style="font-size:11px;color:var(--red);margin-top:5px;min-height:16px;" id="passErr"></div>
+      <div style="font-size:11px;color:var(--green);margin-top:5px;min-height:16px;" id="passOk"></div>
     </div>
 
     <!-- Change Email -->
-    <div class="acc-section" id="accEmailSection">
-      <div class="acc-section-hdr" onclick="toggleAccSection('accEmailSection')">
-        <span class="acc-section-title">📧 Change Email <span style="font-size:9px;color:var(--dim);font-weight:400;">(for password recovery)</span></span>
-        <span class="acc-section-arrow">▼</span>
-      </div>
-      <div class="acc-section-body">
-        <div class="auth-field"><label>New Email</label><input type="email" id="newEmail" placeholder="your@email.com"/></div>
-        <div class="auth-field"><label>Confirm New Email</label><input type="email" id="newEmail2" placeholder="Repeat email address"/></div>
-        <button class="auth-submit" onclick="changeEmail()" style="margin-top:4px;">Update Email</button>
-        <div style="font-size:11px;color:var(--red);margin-top:5px;min-height:16px;" id="emailErr"></div>
-        <div style="font-size:11px;color:var(--green);margin-top:5px;min-height:16px;" id="emailOk"></div>
-      </div>
+    <div style="background:#060616;border:1px solid #12123a;border-radius:8px;padding:12px;">
+      <div style="font-size:10px;color:var(--accent2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;font-weight:600;">📧 Change Email <span style="color:var(--dim);font-size:9px;">(used for password recovery)</span></div>
+      <div class="auth-field"><label>New Email</label><input type="email" id="newEmail" placeholder="your@email.com"/></div>
+      <div class="auth-field"><label>Confirm New Email</label><input type="email" id="newEmail2" placeholder="Repeat email address"/></div>
+      <button class="auth-submit" onclick="changeEmail()" style="margin-top:4px;">Update Email</button>
+      <div style="font-size:11px;color:var(--red);margin-top:5px;min-height:16px;" id="emailErr"></div>
+      <div style="font-size:11px;color:var(--green);margin-top:5px;min-height:16px;" id="emailOk"></div>
     </div>
-
-    <!-- Sign Out -->
-    <button class="acc-logout-btn" onclick="closeAccountSettings();doLogout()">🚪 Sign Out</button>
   </div>
 </div>
 
@@ -363,7 +333,7 @@ html,body{background:#07071a;min-height:100%;font-family:-apple-system,BlinkMacS
 const SUPABASE_URL = 'https://uflkusbgmxkcaosbqxav.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmbGt1c2JnbXhrY2Fvc2JxeGF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzNjAzNzYsImV4cCI6MjA5NTkzNjM3Nn0.sxQecTkOz_9q0NbTkZRsqX46H2jkJxyPFaYSxUxUBJQ';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const DATA_URL = '/ps5-tracker/games.json';
+const DATA_URL = '/games.json';
 
 let ALL_GAMES=[], currentFilter={type:'all',value:''}, trackedIds=new Set();
 let notifications=[], currentUser=null, currentUsername='', forgotType='password', toastTimeout=null;
@@ -593,7 +563,7 @@ async function loadGames(){
     buildAlpha();
     renderGames(ALL_GAMES);
   }catch(e){
-    document.getElementById('results').innerHTML='<div class="empty">⚠️ Could not load game data. Make sure games.json is uploaded to your site.</div>';
+    document.getElementById('results').innerHTML='<div class="empty">⚠️ Could not load game data.</div>';
   }
 }
 
@@ -616,18 +586,26 @@ function checkTrackedUpdates(data){
 
 // ── Notifications ─────────────────────────────────────────────────────────────
 function checkNotifPermission(){
+  if(!('Notification' in window)) return;
   const btn=document.getElementById('notifEnableBtn');
-  if(!('Notification' in window)){btn.style.display='none';return;}
-  btn.style.display='';
   if(Notification.permission==='granted'){btn.textContent='✅ Notifications ON';btn.classList.add('enabled');}
   else if(Notification.permission==='denied'){btn.textContent='🚫 Blocked';btn.classList.add('enabled');}
-  else{btn.textContent='🔔 Enable Notifications';btn.classList.remove('enabled');}
 }
 async function requestNotifPermission(){
-  if(!('Notification' in window)){document.getElementById('notifEnableBtn').style.display='none';return;
+  // iPhone Safari requires the site to be added to home screen for notifications
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isStandalone = window.navigator.standalone === true;
+  
+  if(isIOS && !isStandalone){
+    showToast('📱','Add to Home Screen','On iPhone: tap Share → Add to Home Screen, then open from there to enable notifications!');
+    document.getElementById('notifEnableBtn').textContent='📱 Add to Home Screen First';
+    return;
+  }
+  if(!('Notification' in window)){
+    showToast('⚠️','Not Supported','Your browser does not support notifications. Try Chrome or Edge.');
+    return;
   }
   if(Notification.permission==='granted'){showToast('✅','Already On','Notifications are already enabled!');return;}
-  if(Notification.permission==='denied'){showToast('🚫','Blocked','Notifications are blocked. Go to Settings → Safari → this site and allow notifications.');return;}
   const r=await Notification.requestPermission();
   if(r==='granted'){
     const btn=document.getElementById('notifEnableBtn');btn.textContent='✅ Notifications ON';btn.classList.add('enabled');
@@ -795,15 +773,8 @@ async function doResetPassword(){
 }
 
 // ── Account Settings ─────────────────────────────────────────────────────────
-function toggleAccSection(id){
-  const sec=document.getElementById(id);
-  const isOpen=sec.classList.contains('open');
-  document.querySelectorAll('.acc-section').forEach(s=>s.classList.remove('open'));
-  if(!isOpen) sec.classList.add('open');
-}
 function openAccountSettings(){
   document.getElementById('accountModal').style.display='flex';
-  document.querySelectorAll('.acc-section').forEach(s=>s.classList.remove('open'));
   document.getElementById('newPass').value='';
   document.getElementById('newPass2').value='';
   document.getElementById('newEmail').value='';
@@ -922,10 +893,6 @@ function startLockListener(){
     }
   });
 })();
-  // ── Service Worker ───────────────────────────────────────────────────────────
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/sw.js').catch(function(){});
-  }
 </script>
 </body>
 </html>

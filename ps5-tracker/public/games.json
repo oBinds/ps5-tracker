@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-06-24T17:35:15.253Z",
+  "lastUpdated": "2026-06-24T17:37:02.991Z",
   "updatedBy": "Binds Admin Panel",
   "games": [
     {
@@ -40,7 +40,7 @@
       "id": "black-ops-2-remaster",
       "title": "Call of Duty: Black Ops II",
       "genre": "shooter",
-      "releaseDate": "TBA (rumored 2026)",
+      "releaseDate": "July Date Unkown",
       "releaseStatus": "tba",
       "delayInfo": "UNCONFIRMED LEAK: Backend listings spotted on PlayStation servers June 2026 for PS4/PS5, alongside Black Ops 1. Reported as a direct port (not a remaster) including Zombies and multiplayer. No official announcement from Activision yet.",
       "preOrderAvailable": false,
@@ -77,9 +77,9 @@
       "releaseDate": "Sep 8, 2026",
       "releaseStatus": "on-track",
       "delayInfo": null,
-      "preOrderAvailable": true,
+      "preOrderAvailable": false,
       "preOrderDate": "Not announced yet",
-      "preOrderPrice": "$46-$76",
+      "preOrderPrice": "TBA",
       "preOrderBonus": null,
       "preOrderLinks": "PlayStation Store (when live)",
       "platforms": "PS5, Xbox Series, PC",

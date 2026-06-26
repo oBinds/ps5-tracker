@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-06-26T04:42:58Z",
+  "lastUpdated": "2026-06-26T08:19:14Z",
   "updatedBy": "Binds PS5 Tracker Auto-Updater v4",
   "games": [
     {
@@ -169,7 +169,7 @@
       "title": "Silent Hill f",
       "genre": "horror",
       "releaseDate": "2026",
-      "releaseStatus": "on-track",
+      "releaseStatus": "released",
       "delayInfo": null,
       "preOrderAvailable": true,
       "preOrderDate": "Now available",

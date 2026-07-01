@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-01T17:27:50Z",
+  "lastUpdated": "2026-07-01T19:16:24Z",
   "updatedBy": "Binds PS5 Tracker Auto-Updater v4",
   "games": [
     {
@@ -262,8 +262,8 @@
       "title": "Call of Duty: Black Ops 7",
       "genre": "shooter",
       "releaseDate": "Late 2026",
-      "releaseStatus": "on-track",
-      "delayInfo": null,
+      "releaseStatus": "delayed",
+      "delayInfo": "Delay reported Jul 2026. Source: https://www.gamespot.com/articles/this-week-in-games-was-bad-but-next-week-may-be-worse/",
       "preOrderAvailable": true,
       "preOrderDate": "Now available",
       "preOrderPrice": "$69.99",

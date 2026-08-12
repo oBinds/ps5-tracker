@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-12T13:39:01Z",
+  "lastUpdated": "2026-08-12T14:40:25Z",
   "updatedBy": "Binds PS5 Tracker Auto-Updater v4",
   "games": [
     {
@@ -231,7 +231,7 @@
       "title": "Ghost of Yotei",
       "genre": "action",
       "releaseDate": "2026",
-      "releaseStatus": "on-track",
+      "releaseStatus": "released",
       "delayInfo": null,
       "preOrderAvailable": true,
       "preOrderDate": "Now available",

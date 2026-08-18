@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-18T08:40:59Z",
+  "lastUpdated": "2026-08-18T09:06:56Z",
   "updatedBy": "Binds PS5 Tracker Auto-Updater v4",
   "games": [
     {
@@ -121,8 +121,8 @@
       "physicalEdition": true,
       "digitalEdition": true,
       "ps5Exclusive": false,
-      "hasBeta": false,
-      "betaDate": null,
+      "hasBeta": true,
+      "betaDate": "Beta announced Aug 2026",
       "tags": [
         "gta",
         "rockstar",

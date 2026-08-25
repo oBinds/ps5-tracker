@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-25T18:59:08Z",
+  "lastUpdated": "2026-08-25T19:28:12Z",
   "updatedBy": "Binds PS5 Tracker Auto-Updater v4",
   "games": [
     {
@@ -340,8 +340,8 @@
       "physicalEdition": true,
       "digitalEdition": true,
       "ps5Exclusive": false,
-      "hasBeta": false,
-      "betaDate": null,
+      "hasBeta": true,
+      "betaDate": "Beta announced Aug 2026",
       "tags": [
         "vampire",
         "dark fantasy",
@@ -356,7 +356,7 @@
       "title": "Crimson Desert",
       "genre": "action",
       "releaseDate": "2026",
-      "releaseStatus": "on-track",
+      "releaseStatus": "released",
       "delayInfo": null,
       "preOrderAvailable": true,
       "preOrderDate": "Now available",
@@ -371,8 +371,8 @@
       "physicalEdition": true,
       "digitalEdition": true,
       "ps5Exclusive": false,
-      "hasBeta": false,
-      "betaDate": null,
+      "hasBeta": true,
+      "betaDate": "Beta announced Aug 2026",
       "tags": [
         "pearl abyss",
         "open world",

@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-21T18:47:57Z",
+  "lastUpdated": "2026-09-21T22:17:00Z",
   "updatedBy": "Binds PS5 Tracker Auto-Updater v4",
   "games": [
     {
@@ -75,7 +75,7 @@
       "title": "Halloween",
       "genre": "horror",
       "releaseDate": "Sep 8, 2026",
-      "releaseStatus": "on-track",
+      "releaseStatus": "released",
       "delayInfo": null,
       "preOrderAvailable": false,
       "preOrderDate": "Not announced yet",

@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-10-28T15:36:47Z",
+  "lastUpdated": "2026-10-28T20:31:18Z",
   "updatedBy": "Binds PS5 Tracker Auto-Updater v4",
   "games": [
     {
@@ -295,7 +295,7 @@
       "title": "Hollow Knight: Silksong",
       "genre": "action",
       "releaseDate": "TBA",
-      "releaseStatus": "tba",
+      "releaseStatus": "released",
       "delayInfo": "Announced in 2019, no release date has ever been given. Still confirmed for PS5.",
       "preOrderAvailable": false,
       "preOrderDate": null,
